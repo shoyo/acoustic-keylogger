@@ -1,9 +1,8 @@
 # Keyboard Acoustic Emanations Attack (Research)
 
 ## Objectives
-  * Create a tool with various machine learning models and algorithms to create
-    a purely "audio-based" keylogging attack. (referred to as a "keyboard acoustic 
-    emanations attack")
+  * Create a proof-of-concept for a purely "audio-based" keylogging attack. 
+    (referred to as a "keyboard acoustic emanations attack")
   * Ideally requires no supervised training, and instead uses unsupervised methods to
     approximate typed keys according to key-press sound waveform and wave intervals.
 

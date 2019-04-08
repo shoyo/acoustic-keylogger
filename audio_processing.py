@@ -135,7 +135,6 @@ def collect_keystroke_data(output=False):
 # Data storage (ALL keystroke data -> store in database)
 
 Base = declarative_base()
-Session = orm.sessionmaker(bind=engine)
 
 
 class Keystroke(Base):
@@ -148,20 +147,19 @@ class Keystroke(Base):
     sound_data = db.ARRAY(db.Integer)
 
     def __repr__(self):
-        return f'<Keystroke(key={key_type}, digest={sound_digest})>'
+        return f'<Keystroke(key={self.key_type}, digest={self.sound_digest})>'
 
 
 def connect_to_database():
     """Connect to database and return engine, connection, metadata."""
     engine = db.create_engine(os.environ['DATABASE_URL'], echo=True)
     connection = engine.connect()
-    metadata = db.MetaData()
-    return engine, connection, metadata
+    return engine, connection
 
 
 def create_keystroke_table():
     """Create keystroke table in database."""
-    engine, _, _ = connect_to_database()
+    engine, _ = connect_to_database()
     Base.metadata.create_all(engine)
 
 
@@ -169,9 +167,9 @@ def store_keystroke_data(collected_data):
     """Store collected data in database and return result proxy.
     
     input format  -- output of collect_keystroke_data()
-    output format -- pandas DataFrame used to store data in database
     """
-    connect_to_database()
+    engine, _ = connect_to_database()
+    Session = orm.sessionmaker(bind=engine)
     session = Session()
     try:
         for data in collected_data:
@@ -196,7 +194,8 @@ def load_keystroke_data():
     form of: (training data "x", labels "y").
     For details, view documentation at: https://keras.io/models/model/#fit
     """
-    _, connection, _ = connect_to_database()
+    engine, _ = connect_to_database()
+    Session = orm.sessionmaker(bind=engine)
     session = Session()
     keystrokes = session.query(Keystroke).all()
     session.close()

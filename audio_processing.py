@@ -15,6 +15,9 @@ import pandas as pd
 from scipy.io import wavfile as wav
 import tensorflow as tf
 import sqlalchemy as db
+import sqlalchemy.orm as orm
+from sqlalchemy.ext.declarative import declarative_base
+
 
 # File input (single WAV file -> sound file data)
 
@@ -131,49 +134,73 @@ def collect_keystroke_data(output=False):
 
 # Data storage (ALL keystroke data -> store in database)
 
+Base = declarative_base()
+Session = orm.sessionmaker(bind=engine)
+
+
+class Keystroke(Base):
+    """Schema for Keystroke model."""
+    __tablename__ = 'keystrokes'
+
+    id = db.Column(db.BigInteger, primary_key=True)
+    key_type = db.Column(db.String(32), nullable=False)
+    sound_digest = db.Column(db.BigInteger, nullable=False, unique=True)
+    sound_data = db.ARRAY(db.Integer)
+
+    def __repr__(self):
+        return f'<Keystroke(key={key_type}, digest={sound_digest})>'
+
+
 def connect_to_database():
     """Connect to database and return engine, connection, metadata."""
-    engine = db.create_engine(os.environ['DATABASE_URL'])
+    engine = db.create_engine(os.environ['DATABASE_URL'], echo=True)
     connection = engine.connect()
     metadata = db.MetaData()
     return engine, connection, metadata
 
 
 def create_keystroke_table():
-    """Create keystroke table in database and return create table."""
-    keystrokes_tbl = db.Table('keystrokes', metadata,
-                              db.Column('id', db.BigInteger, primary_key=True),
-                              db.Column('key_type', db.String(32), nullable=False),
-                              db.Column('sound_digest', db.BigInteger, nullable=False, unique=True),
-                              db.Column('sound_data', db.ARRAY(db.Integer)))
-    metadata.create_all(engine)
-    return keystrokes_tbl
+    """Create keystroke table in database."""
+    engine, _, _ = connect_to_database()
+    Base.metadata.create_all(engine)
 
 
-def store_keystroke_data(collected_data, engine, metadata):
+def store_keystroke_data(collected_data):
     """Store collected data in database and return result proxy.
     
     input format  -- output of collect_keystroke_data()
     output format -- pandas DataFrame used to store data in database
     """
-    keystrokes_tbl = metadata.tables['keystrokes']
-    query = db.insert(keystrokes_tbl)
-    result_proxy = engine.execute(query, collected_data)
-    return result_proxy
+    connect_to_database()
+    session = Session()
+    try:
+        for data in collected_data:
+            entry = Keystroke(key_type=data['key_type'],
+                              sound_digest=data['sound_digest'],
+                              sound_data=data['sound_data'])
+            session.add(entry)
+        session.commit()
+    except:
+        session.rollback()
+        raise
+    finally:
+        session.close()
 
 
 # Data retrieval
 
 def load_keystroke_data():
-    """Format data to pass to Keras model.fit(). Return a tuple in the
+    """Retrieve data from database, do relevant formatting, and return it.
+
+    Format data to pass to Keras model.fit(). Return a tuple in the
     form of: (training data "x", labels "y").
-    
     For details, view documentation at: https://keras.io/models/model/#fit
     """
-    engine = db.create_engine("postgresql+psycopg2://postgres@acoustic-keylogger-research_db_1:5432")
-    engine.connect()
-    metadata = db.MetaData()
-
+    _, connection, _ = connect_to_database()
+    session = Session()
+    keystrokes = session.query(Keystroke).all()
+    session.close()
+    return keystrokes
 
 
 # Data preprocessing (before training)

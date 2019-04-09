@@ -13,6 +13,7 @@ from copy import deepcopy
 import numpy as np
 import pandas as pd
 from scipy.io import wavfile as wav
+from scipy.special import expit
 import tensorflow as tf
 import sqlalchemy as db
 import sqlalchemy.orm as orm
@@ -220,12 +221,12 @@ def load_keystroke_data():
 # Data preprocessing (before training)
 
 def scale_keystroke_data(data):
-    """Scale each keystroke data to a value between 0 and 1.
-    Return a copy of data and don't modify data itself.
+    """Scale each value in data to an appropriate value between 0 and 1.
+    
+    input format -- NumPy array of Numpy arrays
     """
-    data_copy = deepcopy(data)
-    for label in data_copy:
-        for i in range(len(data_copy[label])):
-            data_copy[label][i] /= max(data_copy[label][i])
+    data_copy = deepcopy(data.astype(float))
+    for i in range(len(data_copy)):
+        data_copy[i] = expit(data_copy[i])
     return data_copy
 

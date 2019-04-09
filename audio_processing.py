@@ -17,6 +17,7 @@ import tensorflow as tf
 import sqlalchemy as db
 import sqlalchemy.orm as orm
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.dialects import postgresql
 
 
 # File input (single WAV file -> sound file data)
@@ -144,7 +145,7 @@ class Keystroke(Base):
     id = db.Column(db.BigInteger, primary_key=True)
     key_type = db.Column(db.String(32), nullable=False)
     sound_digest = db.Column(db.BigInteger, nullable=False, unique=True)
-    sound_data = db.ARRAY(db.Integer)
+    sound_data = db.Column(postgresql.ARRAY(db.Integer))
 
     def __repr__(self):
         return f'<Keystroke(key={self.key_type}, digest={self.sound_digest})>'
@@ -154,13 +155,19 @@ def connect_to_database():
     """Connect to database and return engine, connection, metadata."""
     engine = db.create_engine(os.environ['DATABASE_URL'], echo=True)
     connection = engine.connect()
-    return engine, connection
+    return engine
 
 
 def create_keystroke_table():
     """Create keystroke table in database."""
-    engine, _ = connect_to_database()
+    engine = connect_to_database()
     Base.metadata.create_all(engine)
+
+
+def drop_keystroke_table():
+    """Drop keystroke table in database."""
+    engine = connect_to_database()
+    Keystroke.__table__.drop(engine)
 
 
 def store_keystroke_data(collected_data):
@@ -168,7 +175,7 @@ def store_keystroke_data(collected_data):
     
     input format  -- output of collect_keystroke_data()
     """
-    engine, _ = connect_to_database()
+    engine = connect_to_database()
     Session = orm.sessionmaker(bind=engine)
     session = Session()
     try:
@@ -190,16 +197,24 @@ def store_keystroke_data(collected_data):
 def load_keystroke_data():
     """Retrieve data from database, do relevant formatting, and return it.
 
-    Format data to pass to Keras model.fit(). Return a tuple in the
-    form of: (training data "x", labels "y").
+    Return as a tuple of tuples of the form: (x, y)
+    where x denotes training data and y denotes labels.
+
+    This data will be passed to tf.keras.model.fit().
     For details, view documentation at: https://keras.io/models/model/#fit
     """
-    engine, _ = connect_to_database()
+    engine = connect_to_database()
     Session = orm.sessionmaker(bind=engine)
     session = Session()
     keystrokes = session.query(Keystroke).all()
     session.close()
-    return keystrokes
+
+    data, labels = [], []
+    for row in keystrokes:
+        data.append(row.sound_data)
+        labels.append(row.key_type)
+
+    return np.array(data), np.array(labels)
 
 
 # Data preprocessing (before training)

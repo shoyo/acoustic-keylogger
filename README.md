@@ -6,6 +6,15 @@
   * Ideally requires no supervised training, and instead uses unsupervised methods to
     approximate typed keys according to key-press sound waveform and wave intervals.
 
+## Motivation
+Many research papers were published in the mid-2000s concerning the topic of keyboard acoustic
+enmanations attack. Some research, such as [*Keyboard Acoustic Emanations Revisited* by L. Zhuang,
+F. Zhou, J. D. Tygar in 2005](https://www.cs.cornell.edu/~shmat/courses/cs6431/zhuang.pdf), demonstrated
+extremely accurate results even without labeled training data. Technology surrounding machine learning
+has advanced considerably since the time such research was published. This research therefore
+aims to identify how __accurate__, __effective__, and __accessible__ such a security attack is in
+the current machine learning landscape.
+
 ## Development Environment
 ### Option 1 - Virtual environment
 Install Python version 3.6.  

@@ -223,7 +223,8 @@ def load_keystroke_data():
     return np.array(data), np.array(labels)
 
 
-def load_keystroke_data2():
+def load_keystroke_data_for_binary_classifier(classify={'space'}):
+    """Load data from database for a binary classifier."""
     engine = connect_to_database()
     Session = orm.sessionmaker(bind=engine)
     session = Session()
@@ -234,7 +235,7 @@ def load_keystroke_data2():
 
     data, labels = [], []
     for row in keystrokes:
-        if row.key_type == 'space':
+        if row.key_type in classify:
             labels.append(1)
         else:
             labels.append(0)

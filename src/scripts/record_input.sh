@@ -9,6 +9,6 @@ FILENAME="recording-"`date +"%s".wav`
 
 read -p "Press enter to start recording (5s of audio)" rec
 if [ -z $rec ]; then
-  rec --bits=16 --rate=44100 recordings/$FILENAME trim 0 5
+  rec --bits=16 --rate=44100 $LAB_ENV/datasets/recordings/$FILENAME trim 0 5
 fi
-echo WAV file \"$FILENAME\" created in \"recordings/\" directory
+echo WAV file \"$FILENAME\" created in \"datasets/recordings/\" directory

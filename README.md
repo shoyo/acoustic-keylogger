@@ -73,6 +73,16 @@ __src/scripts/supervised_learning.py__. There are also accompanying Jupyter note
 and __supervised_learning.py__ in the __src/jupyter__ directory. These notebooks (for the most part) mirror the code in
 the corresponding __src/scripts__ directory.
 
+In many cases, I find it useful to run a Python script within the Docker container specified by __Dockerfile__, but outside of
+the Jupyter notebook (I've had cases where the Jupyter kernel dies during computationally intensive work, but work fine when
+the same operations are run outside of the notebook). In such cases, run
+
+    docker-compose run env <insert Python command>
+    
+Example:
+    
+    docker-compose run env python -i src/scripts/supervised_learning.py
+
 ## Relevant Research Papers
 Research papers for reference. For the most part, I intend to follow the methodology for the Zhuang, Zhou, Tygar paper 
 (k-clustering, HMMs for guessing, iterating with trained classifier from inferred data).

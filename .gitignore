@@ -1,6 +1,6 @@
 datasets/
 papers/
-recordings/*
+recordings/
 brainstorm.txt
 __pycache__
 */__pycache__

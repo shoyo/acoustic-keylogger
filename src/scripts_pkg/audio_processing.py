@@ -20,19 +20,19 @@ from sqlalchemy.dialects import postgresql
 
 # File input (single WAV file -> sound file data)
 
-def wav_read(filename):
+def wav_read(filename, base_dir='/env/'):
     """Return 1D NumPy array of wave-formatted audio data denoted by filename.
     
     Input should be a string containing the path to a wave-formatted audio file.
     File should be uncompressed 16-bit."""
-    sample_rate, data_2d = wav.read(filename)
+    sample_rate, data_2d = wav.read(base_dir + filename)
     data_1d = [val for val, _ in data_2d]
     return np.array(data_1d)
 
 
 # Sound preprocessing before keystroke extraction
 
-def silence_threshold(sound_data, n):
+def silence_threshold(sound_data, n=5, factor=None):
     """Return the silence threshold of the sound data.
     The sound data should begin with n-seconds of silence.
     """
@@ -40,18 +40,18 @@ def silence_threshold(sound_data, n):
     num_samples   = sampling_rate * n
     silence       = sound_data[:num_samples]
     tolerance     = 40
-    factor        = 11  # factor multiplied to threshold
+    factor        = factor or 11  # value multiplied to threshold
     if np.std(silence) > tolerance:
         raise Exception(f'Sound data must begin with at least {n}s of silence.')
     else:
         return max(np.amax(silence), abs(np.amin(silence))) * factor
 
     
-def remove_random_noise(sound_data):
+def remove_random_noise(sound_data, threshold=None):
     """Remove random noise from sound data by replacing all values
     under the silence threshold to zero.
     """
-    threshold = silence_threshold(sound_data, 5)
+    threshold = threshold or silence_threshold(sound_data)
     sound_data_copy = sound_data[:]
     for i in range(len(sound_data_copy)):
         if abs(sound_data_copy[i]) < threshold:

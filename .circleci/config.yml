@@ -17,7 +17,7 @@ jobs:
           paths: ~/cache/images.tar
       - run:
           command: |
-            set +o pipefailo
+            set +o pipefail
             docker load -i ~/cache/images.tar | true
       - run: docker-compose pull
       - run: docker-compose build

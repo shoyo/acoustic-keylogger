@@ -1,37 +1,73 @@
 version: 2
 jobs:
-  build:
+  generate_cache:
     machine: true
     working_directory: ~/acoustic-keylogger-research
-
     steps:
       - checkout
-
       - restore_cache:
-          keys:
+          key: 
             - >
-                v1-dependencies-
+                docker-compose-
+                {{ .Branch  }}-
                 {{ checksum "docker-compose.yml" }}-
                 {{ checksum "Dockerfile" }}-
                 {{ checksum "requirements.txt" }}
             - v1-dependencies-
-
-      - run: 
-          name: build docker-compose
-          command: docker-compose build
+          paths: ~/cache/images.tar
       - run:
-          name: spin up docker-compose
-          command: docker-compose up -d
-
+          command: |
+            set +o pipefailo
+            docker load -i ~/cache/images.tar | true
+      - run: docker-compose pull
+      - run: docker-compose build
+      - run:
+          command: |
+            mkdir -p ~/cache
+            docker save $(docker images -q) -o ~/cache/images.tar
       - save_cache:
-          paths:
-            - ./cache
           key: >
-                v1-dependencies-
+                docker-compose-
+                {{ .Branch  }}-
                 {{ checksum "docker-compose.yml" }}-
                 {{ checksum "Dockerfile" }}-
                 {{ checksum "requirements.txt" }}
+          paths: ~/cache/images.tar
 
+  testing:
+    machine: true
+    working_directory: ~/acoustic-keylogger-research
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - >
+                docker-compose-
+                {{ .Branch  }}-
+                {{ checksum "docker-compose.yml" }}-
+                {{ checksum "Dockerfile" }}-
+                {{ checksum "requirements.txt" }}
+            - v1-dependencies-
+          paths: ~/cache/images.tar
       - run:
-          name: run tests
+          command: |
+            set +o pipefail
+            docker load -i ~/cache/images.tar | true
+      - run: 
+          name: Build Docker Compose
+          command: docker-compose build
+      - run:
+          name: Spin up Docker Compose
+          command: docker-compose up -d
+      - run:
+          name: Run tests
           command: docker-compose run env pytest -q tests
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - generate_cache
+      - testing:
+          requires:
+            - generate_cache

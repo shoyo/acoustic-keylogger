@@ -21,8 +21,7 @@ jobs:
 
       - run:
           name: run tests
-          command: docker-compose run env pytest -q src/test_dataman
+          command: docker-compose run env pytest -q tests
 
       - store_artifacts:
-          path: test-reports
-
+          path: tests/reports

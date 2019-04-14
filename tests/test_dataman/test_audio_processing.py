@@ -71,9 +71,8 @@ class TestExtractKeystrokes:
             
     def test_more_rapidly_typed_phrases(self):
         phrases = {
-            'of_course_i_still_love_you',
+            'of_course_i_still_love_you_',
             'we_move_fast',
-            'i_like_windsurfing_',
             'how_many_keystrokes_was_that_',
         }
         for phrase in phrases:

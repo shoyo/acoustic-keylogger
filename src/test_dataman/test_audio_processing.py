@@ -1,19 +1,21 @@
 """
 Written by Shoyo Inokuchi (April 2019)
 
-Tests for "audio_processing.py" in scripts_pkg
+Tests for "audio_processing.py" in "database_management" package.
 """
 import pytest
 import numpy as np
 import numpy.random as rand
 
-from scripts_pkg.audio_processing import *
+from dataman.audio_processing import *
+
+BASE_DIR = '../../'
 
 
 def test_wav_read():
     """Assert ouput is a 1D NumPy array of integers."""
     dummy_file = 'datasets/samples/dummy-recording.wav'
-    result = wav_read(dummy_file)
+    result = wav_read(dummy_file, base_dir=BASE_DIR)
     assert type(result) == np.ndarray
     assert result.ndim == 1
     assert type(result[0]) == np.int16
@@ -22,8 +24,8 @@ def test_wav_read():
 class TestSilenceThreshold:
     def test_not_enough_silence(self):
         """Raise exception when a sound contains no initial silence."""
-        filename = 'datasets/samples/no-initial-silence.wav'
-        input = wav_read(filename)
+        input = wav_read('datasets/samples/no-initial-silence.wav',
+                         base_dir=BASE_DIR)
         with pytest.raises(Exception):
             silence_threshold(input)
 
@@ -55,5 +57,21 @@ def test_remove_random_noise():
 
 
 class TestExtractKeystrokes:
-    pass
+    def test_extract_count(self):
+        phrases = {
+            'hello_',
+            'continental_drift_',
+            'jungle_cruise_',
+            'password_',
+            'windsurfing_',
+            'keyboard_',
+            'this_is_america',
+            'zebra',
+        }
+        for phrase in phrases:
+            filename = 'datasets/extraction-tests/' + phrase + '.wav'
+            input = wav_read(filename, base_dir=BASE_DIR)
+            output = extract_keystrokes(input)
+            assert len(output) == len(phrase)
+        
     

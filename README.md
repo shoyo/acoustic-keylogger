@@ -22,9 +22,9 @@ sign for a considerable security concern.)
 ## Setting up
 ### Option 1 - Docker
 This project uses a Python 3.6 development environment and a PostgreSQL database
-to manage various audio data. These environments are spun up using Docker Compose.  
+to manage various audio data. This option conveniently spins up these environments with Docker Compose.  
 * Install Docker. (https://www.docker.com/products/docker-desktop)  
-* Build image (only required the first time or whenever Docker settings are changed) with `$ docker-compose build`.
+* Build image with `$ docker-compose build`. Only required the first time or whenever Docker settings are changed.
         
 This step will install all dependencies for env (such as Jupyter, Tensorflow, NumPy etc.)
 and mount your local file system with the file system within the "env" Docker container.

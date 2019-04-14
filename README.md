@@ -24,33 +24,34 @@ sign for a considerable security concern.)
 This project uses a Python 3.6 development environment and a PostgreSQL database
 to manage various audio data. This option conveniently spins up these environments with Docker Compose.  
 * Install Docker. (https://www.docker.com/products/docker-desktop)  
-* Build image with `$ docker-compose build`. Only required the first time or whenever Docker settings are changed.
+* Build images with `$ docker-compose build`. This is only required the first time or whenever Docker settings are 
+  changed.
         
 This step will install all dependencies for env (such as Jupyter, Tensorflow, NumPy etc.)
 and mount your local file system with the file system within the "env" Docker container.
         
 * Spin up the database and development environment with `$ docker-compose up`.
         
-This should open up the database for connections and make *localhost* (port 8888) access
+This should open up the database for connections and make __http://localhost:8888__ access
 the Jupyter notebook.
 
 ### Option 2 - No Docker
-In exchange for containerization and seamless setup, Docker requires a lot of overhead memory (relative to no Docker) and 
-comes with little quirks in the development environment with the current setup (like having to manually open Jupyter
-notebook). I find that a lot of times, using Docker for small tweaks is a bit overkill, so I'm leaving this
+In exchange for containerization and seamless setup, Docker requires a lot of overhead memory and 
+comes with little quirks in the development environment with the current setup (like having to manually open the Jupyter
+notebook). I find that a lot of times using Docker for small tweaks is a bit overkill, so I'm leaving this
 option here.
 
 * Install Python version 3.6. To downgrade from Python 3.7+ without overriding your current version,
   I recommend installing conda (https://www.anaconda.com/distribution/) and running `$ conda install python=3.6.8`.
 
-* Set up a virtual environment. I recommend virtualenvwrapper for managing environments.   
+* Set up a virtual environment. I recommend virtualenvwrapper for managing multiple environments.   
 
 * Install dependencies with `$ pip3 install -r requirements.txt`.  
 
 * Open Jupyter notebook with `$ jupyter notebook`.
 
 
-This option is simpler if you're unfamiliar with Docker or you don't need to access the database.
+This option can be simpler if you're unfamiliar with Docker or you don't need to access the database.
 (Though the latter should still be possible using local postgres commands)
 
 
@@ -59,22 +60,25 @@ __Disclaimer__: Because this project is still in its very early stages and the r
 drastic refactorings, this section is likely to change the most. Many of the instructions or file locations
 listed here may be completely wrong (though I'll do my best to actively keep this up-to-date).
 
+__Last Updated__: April 14, 2019
+
 ### File I/O, keystroke extraction
 The current method of processing sound data is recording audio, saving in WAV format, and extracting the keystroke
-sounds as NumPy arrays. Functions to handle these processes are located in __src/scripts/audio_processing.py__.
+sounds as NumPy arrays. Functions to handle these processes are located in the __src/dataman__ package. To access the
+functions, import the package with `from dataman.audio_processing import *` in the Python environment. Relevant functions
+include `wav_read()`, `extract_keystrokes()`, and more. __src/dataman/audio_processing.py__ contains light documentation
+in the docstrings.
 
 ### Database storage and retrieval
 To avoid having the parse WAV files for keystrokes each time data is required, extracted keystroke data is stored
 in a Postgres database (via SQLAlchemy). When using the data for training a model, the data is first retrieved from the 
-database then preprocessed externally. Functions for storing and loading data is also located in
-__src/scripts/audio_processing.py__.
+database then preprocessed externally. Functions for storing and loading data are also located in the __src/dataman__
+package. Relevant functions include `store_keystrokes()`, `load_keystrokes()`, and more.
 
 
 ### Other
 Example for a basic keystroke classifier (currently at an incredible 4-5% accuracy at the time of writing) is located
-__src/scripts/supervised_learning.py__. There are also accompanying Jupyter notebooks for both __audio_processing.py__
-and __supervised_learning.py__ in the __src/jupyter__ directory. These notebooks (for the most part) mirror the code in
-the corresponding __src/scripts__ directory.
+__src/supervised_learning.py__. 
 
 In many cases, I find it useful to run a Python script within the Docker container specified by __Dockerfile__, but outside of
 the Jupyter notebook (I've had cases where the Jupyter kernel dies during computationally intensive work, but work fine when

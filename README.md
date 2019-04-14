@@ -103,7 +103,7 @@ __Note:__ Both of the commands above are assumed to be executed from the base di
 
 
 ## Long-term TODO's
-Here I list portions of research that can always be improved.
+Here I list portions of this project that can always be improved.
 
 #### Keystroke Extraction (src/dataman/audio_processing.py)
 This refers to the process of inputting an audio clip of somebody typing, and outputting the individual keystrokes within the

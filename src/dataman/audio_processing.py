@@ -88,7 +88,7 @@ def extract_keystrokes(sound_data, sample_rate=44100):
     :rtype            -- NumPy array of NumPy arrays
     """
     threshold          = silence_threshold(sound_data, 5)
-    keystroke_duration = 0.23   # seconds 
+    keystroke_duration = 0.3   # seconds 
     len_sample         = int(sample_rate * keystroke_duration)
     
     keystrokes = []

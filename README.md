@@ -1,4 +1,5 @@
 # Keyboard Acoustic Emanations Attack (Research)
+[![CircleCI](https://circleci.com/gh/shoyo-inokuchi/acoustic-keylogger-research/tree/master.svg?style=svg)](https://circleci.com/gh/shoyo-inokuchi/acoustic-keylogger-research/tree/master)
 
 ## Objectives
   * Create a proof-of-concept for a keyboard acoustic emanations attack, and evaluate
@@ -92,6 +93,7 @@ Example:
 
 
 ## Testing
+[![CircleCI](https://circleci.com/gh/shoyo-inokuchi/acoustic-keylogger-research/tree/master.svg?style=svg)](https://circleci.com/gh/shoyo-inokuchi/acoustic-keylogger-research/tree/master)
 Tests are being implemented for the __src/dataman__ package, which contains various functions for audio
 processing and data management. Tests are contained within __src/test_dataman__.
 

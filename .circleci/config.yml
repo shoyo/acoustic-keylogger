@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/python3.6.8
+      - image: circleci/python3.6
 
     working_directory: ~/acoustic-keylogger-research
 

@@ -20,32 +20,34 @@ student researcher such as myself can create a relatively effective prototype, t
 sign for a considerable security concern.)
 
 ## Setting up
-### Option 1 - Docker (recommended)
+### Option 1 - Docker
 This project uses a Python 3.6 development environment and a PostgreSQL database
 to manage various audio data. These environments are spun up using Docker Compose.  
 * Install Docker. (https://www.docker.com/products/docker-desktop)  
-* Build image (only required the first time or whenever Docker settings are changed) with
-
-        docker-compose build
+* Build image (only required the first time or whenever Docker settings are changed) with `$ docker-compose build`.
         
 This step will install all dependencies for env (such as Jupyter, Tensorflow, NumPy etc.)
 and mount your local file system with the file system within the "env" Docker container.
         
-* Spin up the database and development environment with
-  
-        docker-compose up
+* Spin up the database and development environment with `$ docker-compose up`.
         
 This should open up the database for connections and make *localhost* (port 8888) access
 the Jupyter notebook.
 
 ### Option 2 - No Docker
-This option isn't really recommended, but I'll leave it here just in case Docker isn't an option
-for whatever reason.
+In exchange for containerization and seamless setup, Docker requires a lot of overhead memory (relative to no Docker) and 
+comes with little quirks in the development environment with the current setup (like having to manually open Jupyter
+notebook). I find that a lot of times, using Docker for small tweaks is a bit overkill, so I'm leaving this
+option here.
 
-Install Python version 3.6.  
-Set up virtual environment. I recommend virtualenvwrapper for managing environments.   
-Install dependencies with `pip3 install -r requirements.txt`.  
-Open Jupyter notebook with `jupyter notebook`.
+* Install Python version 3.6. To downgrade from Python 3.7+ without overriding your current version,
+  I recommend installing conda (https://www.anaconda.com/distribution/) and running `$ conda install python=3.6.8`.
+
+* Set up a virtual environment. I recommend virtualenvwrapper for managing environments.   
+
+* Install dependencies with `$ pip3 install -r requirements.txt`.  
+
+* Open Jupyter notebook with `$ jupyter notebook`.
 
 
 This option is simpler if you're unfamiliar with Docker or you don't need to access the database.
@@ -67,6 +69,7 @@ in a Postgres database (via SQLAlchemy). When using the data for training a mode
 database then preprocessed externally. Functions for storing and loading data is also located in
 __src/scripts/audio_processing.py__.
 
+
 ### Other
 Example for a basic keystroke classifier (currently at an incredible 4-5% accuracy at the time of writing) is located
 __src/scripts/supervised_learning.py__. There are also accompanying Jupyter notebooks for both __audio_processing.py__
@@ -77,11 +80,42 @@ In many cases, I find it useful to run a Python script within the Docker contain
 the Jupyter notebook (I've had cases where the Jupyter kernel dies during computationally intensive work, but work fine when
 the same operations are run outside of the notebook). In such cases, run
 
-    docker-compose run env <insert Python command>
+    $ docker-compose run env <insert command>
     
 Example:
     
-    docker-compose run env python -i src/scripts/supervised_learning.py
+    $ docker-compose run env python -i src/dataman/supervised_learning.py
+
+
+## Testing
+Tests are being implemented for the __src/dataman__ package, which contains various functions for audio
+processing and data management. Tests are contained within __src/test_dataman__.
+
+To run tests with the Docker configuration (Option 1), execute:
+
+    $ docker-compose run env pytest -q src/test_dataman
+    
+To run tests with no Docker configuration (Option 2), execute:
+
+    $ python3.6 -m pytest -q src/test_dataman
+
+__Note:__ Both of the commands above are assumed to be executed from the base directory of this repository.
+
+
+## Long-term TODO's
+Here I list portions of research that can always be improved.
+
+#### Keystroke Extraction (src/dataman/audio_processing.py)
+This refers to the process of inputting an audio clip of somebody typing, and outputting the individual keystrokes within the
+audio encoded as NumPy arrays. The current implementation simply detects whenever a "silence threshold" is exceeded, and
+slices 0.25 seconds from that point. Though this approach works well for basic audio recordings, it's very rigid. 
+It can't handle clips where keys are pressed very rapidly in succession, or when there is too much background noise.
+
+Since keystroke extraction is an essential functionality of this topic, any improvements to the algorithm will have
+cascading benefits to the rest of this research. 
+
+...
+
 
 ## Relevant Research Papers
 Research papers for reference. For the most part, I intend to follow the methodology for the Zhuang, Zhou, Tygar paper 

@@ -14,6 +14,7 @@ services:
       - "8888:8888"
     environment:
       - DATABASE_URL=postgresql+psycopg2://postgres@acoustic-keylogger-research_db_1:5432
+      - PYTHONPATH=/env/custom-packages/
     depends_on:
       - db
 

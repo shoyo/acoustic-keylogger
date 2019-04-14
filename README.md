@@ -42,13 +42,25 @@ notebook). I find that a lot of times using Docker for small tweaks is a bit ove
 option here.
 
 * Install Python version 3.6. To downgrade from Python 3.7+ without overriding your current version,
-  I recommend installing conda (https://www.anaconda.com/distribution/) and running `$ conda install python=3.6.8`.
+  I recommend installing conda (https://www.anaconda.com/distribution/) and running 
+  
+        $ conda install python=3.6.8
 
 * Set up a virtual environment. I recommend virtualenvwrapper for managing multiple environments.   
 
-* Install dependencies with `$ pip3 install -r requirements.txt`.  
+* Install dependencies with 
 
-* Open Jupyter notebook with `$ jupyter notebook`.
+        $ pip3 install -r requirements.txt  
+
+* Make sure Python can find custom packages for this repository with
+ 
+        $ export PYTHONPATH=/path/to/repo/acoustic-keylogger-research/custom-packages
+        
+  I recommend adding this command to your `~/.bash_profile` or `~/.bashrc` so that it gets loaded between terminal sessions.
+
+* Open Jupyter notebook with 
+        
+        $ jupyter notebook
 
 
 This option can be simpler if you're unfamiliar with Docker or you don't need to access the database.
@@ -88,7 +100,7 @@ the same operations are run outside of the notebook). In such cases, run
     
 Example:
     
-    $ docker-compose run env python -i src/dataman/supervised_learning.py
+    $ docker-compose run env python -i src/supervised_learning.py
 
 
 ## Testing [![CircleCI](https://circleci.com/gh/shoyo-inokuchi/acoustic-keylogger-research/tree/master.svg?style=svg)](https://circleci.com/gh/shoyo-inokuchi/acoustic-keylogger-research/tree/master)
@@ -98,11 +110,11 @@ processing and data management. Tests are contained within __src/test_dataman__.
 
 To run tests with the Docker configuration (Option 1), execute:
 
-    $ docker-compose run env pytest -q src/test_dataman
+    $ docker-compose run env pytest -q tests
     
 To run tests with no Docker configuration (Option 2), execute:
 
-    $ python3.6 -m pytest -q src/test_dataman
+    $ python3.6 -m pytest -q tests
 
 __Note:__ Both of the commands above are assumed to be executed from the base directory of this repository.
 

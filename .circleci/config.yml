@@ -6,22 +6,32 @@ jobs:
 
     steps:
       - checkout
-      - run: docker-compose build
-      - run: docker-compose up -d
 
-      # - restore_cache:
-      #     keys:
-      #       - v1-dependencies-{{ checksum "requirements.txt" }}
-      #       - v1-dependencies-
+      - restore_cache:
+          keys:
+            - >
+                v1-dependencies-
+                {{ checksum "docker-compose.yml" }}-
+                {{ checksum "Dockerfile" }}-
+                {{ checksum "requirements.txt" }}
+            - v1-dependencies-
 
-      # - save_cache:
-      #     paths:
-      #       - ./venv
-      #     key: v1-dependecies-{{ checksum "requirements.txt" }}
+      - run: 
+          name: build docker-compose
+          command: docker-compose build
+      - run:
+          name: spin up docker-compose
+          command: docker-compose up -d
+
+      - save_cache:
+          paths:
+            - ./cache
+          key: >
+                v1-dependencies-
+                {{ checksum "docker-compose.yml" }}-
+                {{ checksum "Dockerfile" }}-
+                {{ checksum "requirements.txt" }}
 
       - run:
           name: run tests
           command: docker-compose run env pytest -q tests
-
-      - store_artifacts:
-          path: tests/reports

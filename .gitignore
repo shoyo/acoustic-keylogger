@@ -8,6 +8,7 @@ brainstorm.txt
 
 __pycache__
 */__pycache__
+.pytest_cache
 .ipynb_checkpoints
 
 .idea

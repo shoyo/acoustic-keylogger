@@ -56,22 +56,20 @@ def test_remove_random_noise():
         assert input[i] == original[i]
 
 
-class TestExtractKeystrokes:
-    def test_extract_count(self):
-        phrases = {
-            '.hello_',
-            '.continental_drift_',
-            '.jungle_cruise_',
-            '.password_',
-            '.windsurfing_',
-            '.keyboard_',
-            '.this_is_america',
-            '.zebra',
-        }
-        for phrase in phrases:
-            filename = 'datasets/extraction-tests/' + phrase + '.wav'
-            input = wav_read(filename, base_dir=BASE_DIR)
-            output = extract_keystrokes(input)
-            assert len(output) == len(phrase) - 1
-        
-    
+# class TestExtractKeystrokes:
+#     def test_extract_count(self):
+#         phrases = {
+#             'hello_',
+#             'continental_drift_',
+#             'jungle_cruise_',
+#             'password_',
+#             'windsurfing_',
+#             'keyboard_',
+#             'this_is_america',
+#             'zebra',
+#         }
+#         for phrase in phrases:
+#             filename = 'datasets/extraction-tests/' + phrase + '.wav'
+#             input = wav_read(filename, base_dir=BASE_DIR)
+#             output = extract_keystrokes(input)
+#             assert len(output) == len(phrase)

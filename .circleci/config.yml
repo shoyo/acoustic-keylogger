@@ -2,7 +2,6 @@ version: 2
 jobs:
   generate_cache:
     machine: true
-    working_directory: ~/acoustic-keylogger-research
     steps:
       - checkout
       - restore_cache:
@@ -19,6 +18,7 @@ jobs:
           command: |
             set +o pipefail
             docker load -i ~/cache/images.tar | true
+      - run: pip install docker-compose
       - run: docker-compose pull
       - run: docker-compose build
       - run:
@@ -36,7 +36,6 @@ jobs:
 
   testing:
     machine: true
-    working_directory: ~/acoustic-keylogger-research
     steps:
       - checkout
       - restore_cache:
@@ -53,6 +52,7 @@ jobs:
           command: |
             set +o pipefail
             docker load -i ~/cache/images.tar | true
+      - run: pip install docker-compose
       - run: 
           name: Pull Docker Compose
           command: docker-compose pull

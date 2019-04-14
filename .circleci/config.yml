@@ -2,6 +2,7 @@ version: 2
 jobs:
   generate_cache:
     machine: true
+    working_directory: ~/acoustic-keylogger-research
     steps:
       - checkout
       - restore_cache:
@@ -15,16 +16,13 @@ jobs:
             - v1-dependencies-
           paths: ~/cache/images.tar
       - run:
+          name: Generate cache if cache not found
           command: |
-            set +o pipefail
-            docker load -i ~/cache/images.tar | true
-      - run: pip install docker-compose
-      - run: docker-compose pull
-      - run: docker-compose build
-      - run:
-          command: |
-            mkdir -p ~/cache
-            docker save $(docker images -q) -o ~/cache/images.tar
+            if [ ! -f ~/cache/images.tar ]; then
+              docker-compose build
+              mkdir -p ~/cache
+              docker save $(docker images -q) -o ~/cache/images.tar
+            fi
       - save_cache:
           key: >
                 docker-compose-
@@ -36,6 +34,7 @@ jobs:
 
   testing:
     machine: true
+    working_directory: ~/acoustic-keylogger-research
     steps:
       - checkout
       - restore_cache:
@@ -49,16 +48,8 @@ jobs:
             - v1-dependencies-
           paths: ~/cache/images.tar
       - run:
-          command: |
-            set +o pipefail
-            docker load -i ~/cache/images.tar | true
-      - run: pip install docker-compose
-      - run: 
-          name: Pull Docker Compose
-          command: docker-compose pull
-      - run: 
-          name: Build Docker Compose
-          command: docker-compose build
+          name: Load Docker images
+          command: docker load -i ~/cache/images.tar | true
       - run:
           name: Spin up Docker Compose
           command: docker-compose up -d

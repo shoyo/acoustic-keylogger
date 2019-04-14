@@ -54,6 +54,9 @@ jobs:
             set +o pipefail
             docker load -i ~/cache/images.tar | true
       - run: 
+          name: Pull Docker Compose
+          command: docker-compose pull
+      - run: 
           name: Build Docker Compose
           command: docker-compose build
       - run:

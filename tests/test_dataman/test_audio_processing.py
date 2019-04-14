@@ -56,20 +56,29 @@ def test_remove_random_noise():
         assert input[i] == original[i]
 
 
-# class TestExtractKeystrokes:
-#     def test_extract_count(self):
-#         phrases = {
-#             'hello_',
-#             'continental_drift_',
-#             'jungle_cruise_',
-#             'password_',
-#             'windsurfing_',
-#             'keyboard_',
-#             'this_is_america',
-#             'zebra',
-#         }
-#         for phrase in phrases:
-#             filename = 'datasets/extraction-tests/' + phrase + '.wav'
-#             input = wav_read(filename, base_dir=BASE_DIR)
-#             output = extract_keystrokes(input)
-#             assert len(output) == len(phrase)
+class TestExtractKeystrokes:
+    def test_slowly_typed_phrases(self):
+        phrases = {
+            'hello_there',
+            'jungle_cruise_',
+            'this_is_not_a_password',
+        }
+        for phrase in phrases:
+            filename = 'datasets/extraction-tests/' + phrase + '.wav'
+            input = wav_read(filename, base_dir=BASE_DIR)
+            output = extract_keystrokes(input)
+            assert len(output) == len(phrase)
+            
+    def test_more_rapidly_typed_phrases(self):
+        phrases = {
+            'of_course_i_still_love_you',
+            'we_move_fast',
+            'i_like_windsurfing_',
+            'how_many_keystrokes_was_that_',
+        }
+        for phrase in phrases:
+            filename = 'datasets/extraction-tests/' + phrase + '.wav'
+            input = wav_read(filename, base_dir=BASE_DIR)
+            output = extract_keystrokes(input)
+            assert len(output) != len(phrase)
+            

@@ -9,7 +9,7 @@ import numpy.random as rand
 
 from dataman.audio_processing import *
 
-BASE_DIR = '../../'
+BASE_DIR = './' # Assumes pytest is called from project base dir
 
 
 def test_wav_read():
@@ -59,19 +59,19 @@ def test_remove_random_noise():
 class TestExtractKeystrokes:
     def test_extract_count(self):
         phrases = {
-            'hello_',
-            'continental_drift_',
-            'jungle_cruise_',
-            'password_',
-            'windsurfing_',
-            'keyboard_',
-            'this_is_america',
-            'zebra',
+            '.hello_',
+            '.continental_drift_',
+            '.jungle_cruise_',
+            '.password_',
+            '.windsurfing_',
+            '.keyboard_',
+            '.this_is_america',
+            '.zebra',
         }
         for phrase in phrases:
             filename = 'datasets/extraction-tests/' + phrase + '.wav'
             input = wav_read(filename, base_dir=BASE_DIR)
             output = extract_keystrokes(input)
-            assert len(output) == len(phrase)
+            assert len(output) == len(phrase) - 1
         
     

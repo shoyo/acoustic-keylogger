@@ -16,7 +16,7 @@ extremely accurate results (96% chars recovered from 10 minute sound recording) 
 training data. Technology surrounding machine learning has advanced considerably since the time such
 research was published. This project therefore aims to identify how __accurate__, __effective__, and
 __accessible__ such a security attack is in the current machine learning landscape. (If an undergraduate
-student researcher such as myself can create a relatively effective prototype, this would likely be a
+student researcher like myself can create a relatively effective prototype, this would likely be a
 sign for a considerable security concern.)
 
 ## Setting up
@@ -36,7 +36,7 @@ This should open up the database for connections and make __http://localhost:888
 the Jupyter notebook.
 
 ### Option 2 - No Docker
-In exchange for containerization and seamless setup, Docker requires a lot of overhead memory and 
+In exchange for containerization and seamless setup, Docker requires more overhead memory and 
 comes with little quirks in the development environment with the current setup (like having to manually open the Jupyter
 notebook). I find that a lot of times using Docker for small tweaks is a bit overkill, so I'm leaving this
 option here.
@@ -77,7 +77,7 @@ package. Relevant functions include `store_keystrokes()`, `load_keystrokes()`, a
 
 
 ### Other
-Example for a basic keystroke classifier (currently at an incredible 4-5% accuracy at the time of writing) is located
+Example for a basic keystroke classifier (currently at an incredible 4-5% accuracy at the time of writing) is located in
 __src/supervised_learning.py__. 
 
 In many cases, I find it useful to run a Python script within the Docker container specified by __Dockerfile__, but outside of

@@ -2,7 +2,6 @@ version: 2
 jobs:
   generate_cache:
     machine: true
-    working_directory: ~/acoustic-keylogger-research
     steps:
       - checkout
       - restore_cache:
@@ -10,6 +9,7 @@ jobs:
             - >
                 docker-compose-
                 {{ .Branch  }}-
+                {{ checksum ".circleci/config.yml" }}-
                 {{ checksum "docker-compose.yml" }}-
                 {{ checksum "Dockerfile" }}-
                 {{ checksum "requirements.txt" }}
@@ -27,6 +27,7 @@ jobs:
           key: >
                 docker-compose-
                 {{ .Branch  }}-
+                {{ checksum ".circleci/config.yml" }}-
                 {{ checksum "docker-compose.yml" }}-
                 {{ checksum "Dockerfile" }}-
                 {{ checksum "requirements.txt" }}
@@ -34,7 +35,6 @@ jobs:
 
   testing:
     machine: true
-    working_directory: ~/acoustic-keylogger-research
     steps:
       - checkout
       - restore_cache:
@@ -42,6 +42,7 @@ jobs:
             - >
                 docker-compose-
                 {{ .Branch  }}-
+                {{ checksum ".circleci/config.yml" }}-
                 {{ checksum "docker-compose.yml" }}-
                 {{ checksum "Dockerfile" }}-
                 {{ checksum "requirements.txt" }}
@@ -49,7 +50,7 @@ jobs:
           paths: ~/cache/images.tar
       - run:
           name: Load Docker images
-          command: docker load -i ~/cache/images.tar | true
+          command: docker load -i ~/cache/images.tar
       - run:
           name: Spin up Docker Compose
           command: docker-compose up -d

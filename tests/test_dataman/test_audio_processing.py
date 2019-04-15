@@ -81,3 +81,47 @@ class TestExtractKeystrokes:
             output = extract_keystrokes(input)
             assert len(output) != len(phrase)
             
+    def test_x(self):
+        pass
+    
+    
+class TestCollectKeystrokeData:
+    base_dir = 'datsets/collection-tests/'
+    
+    def test_standard_collection(self):
+        collection = collect_keystroke_data(base_dir=base_dir)
+        pass
+    
+    def test_sound_digests_are_unique(self):
+        collection = collect_keystroke_data(base_dir=base_dir)
+        used_digests = set()
+        for data in collection:
+            assert data['sound_digest'] not in used_digests
+            used_digests.add(data['sound_digest'])
+            
+    def test_ignore(self):
+        ignore = {
+            'a': {0, 1, 2, 3, 4},
+            'b': {0, 1, 2},
+        }
+        no_ignore = collect_keystroke_data(base_dir=base_dir)
+        with_ignore = collect_keystroke_data(base_dir=base_dir, ignore=ignore)
+        num_ignores = sum([len([val for val in ignore[key]]) for key in ignore])
+        assert len(no_ignore) - len(with_ignore) == num_ignores
+        
+        
+# class TestDatabaseOperations():
+#     url = os.environ['DATABASE_URL'] # Consider designating a separate test db
+#     base_dir = 'datasets/database-tests/'
+#     collection = collect_keystroke_data(base_dir)
+#     
+#     def test_connect_to_real_db(self):
+#         engine = connect_to_database(url)
+#         assert type(engine) == 
+#     
+#     def test
+#     
+#     
+#     
+# def test_scale_keystroke_data():
+#     pass

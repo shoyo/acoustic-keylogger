@@ -9,13 +9,10 @@ import numpy.random as rand
 
 from dataman.audio_processing import *
 
-BASE_DIR = './' # Assumes pytest is called from project base dir
-
 
 def test_wav_read():
     """Assert ouput is a 1D NumPy array of integers."""
-    dummy_file = 'datasets/samples/dummy-recording.wav'
-    result = wav_read(dummy_file, base_dir=BASE_DIR)
+    result = wav_read('datasets/samples/dummy-recording.wav')
     assert type(result) == np.ndarray
     assert result.ndim == 1
     assert type(result[0]) == np.int16
@@ -24,8 +21,7 @@ def test_wav_read():
 class TestSilenceThreshold:
     def test_not_enough_silence(self):
         """Raise exception when a sound contains no initial silence."""
-        input = wav_read('datasets/samples/no-initial-silence.wav',
-                         base_dir=BASE_DIR)
+        input = wav_read('datasets/samples/no-initial-silence.wav')
         with pytest.raises(Exception):
             silence_threshold(input)
 
@@ -64,8 +60,8 @@ class TestExtractKeystrokes:
             'this_is_not_a_password',
         }
         for phrase in phrases:
-            filename = 'datasets/extraction-tests/' + phrase + '.wav'
-            input = wav_read(filename, base_dir=BASE_DIR)
+            filepath = 'datasets/extraction-tests/' + phrase + '.wav'
+            input = wav_read(filepath)
             output = extract_keystrokes(input)
             assert len(output) == len(phrase)
 
@@ -76,21 +72,21 @@ class TestExtractKeystrokes:
             'how_many_keystrokes_was_that_',
         }
         for phrase in phrases:
-            filename = 'datasets/extraction-tests/' + phrase + '.wav'
-            input = wav_read(filename, base_dir=BASE_DIR)
+            filepath = 'datasets/extraction-tests/' + phrase + '.wav'
+            input = wav_read(filepath)
             output = extract_keystrokes(input)
             assert len(output) != len(phrase)
 
-    def test_x(self):
+    def test_no_overlap(self):
         pass
 
 
 class TestCollectKeystrokeData:
-    base_dir = 'datasets/collection-tests/'
+    fpb = 'datasets/collection-tests/'
     keys = ['a', 'b', 'c', 'd', 'e', 'f']
 
     def test_standard_collection(self):
-        c = collect_keystroke_data(base_dir=self.base_dir,
+        c = collect_keystroke_data(filepath_base=self.fpb,
                                    keys=self.keys)
         expected_len = {'a': 5, 'b': 8, 'c': 10, 'd': 3, 'e': 8, 'f': 2}
         for letter in expected_len:
@@ -98,7 +94,7 @@ class TestCollectKeystrokeData:
             assert actual_len == expected_len[letter]
 
     def test_sound_digests_are_unique(self):
-        collection = collect_keystroke_data(base_dir=self.base_dir,
+        collection = collect_keystroke_data(filepath_base=self.fpb,
                                             keys=self.keys)
         used_digests = set()
         for data in collection:
@@ -112,10 +108,10 @@ class TestCollectKeystrokeData:
             'd-3x.wav': {2},
             'e-8x.wav': {6, 7},
         }
-        no_ignore = collect_keystroke_data(base_dir=self.base_dir,
+        no_ignore = collect_keystroke_data(filepath_base=self.fpb,
                                            keys=self.keys)
-        with_ignore = collect_keystroke_data(base_dir=self.base_dir,
+        with_ignore = collect_keystroke_data(filepath_base=self.fpb,
                                              keys=self.keys,
                                              ignore=ignore)
-        num_ignore = sum([len([val for val in ignore[key]]) for key in ignore])
+        num_ignore = sum([len([v for v in ignore[key]]) for key in ignore])
         assert len(no_ignore) - len(with_ignore) == num_ignore

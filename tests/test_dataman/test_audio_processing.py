@@ -89,11 +89,13 @@ class TestCollectKeystrokeData:
     base_dir = 'datsets/collection-tests/'
     
     def test_standard_collection(self):
-        collection = collect_keystroke_data(base_dir=base_dir)
-        pass
+        collection = collect_keystroke_data(base_dir=self.base_dir)
+        expected_len = {'a': 5, 'b': 8, 'c': 10, 'd': 3, 'e': 8, 'f': 2}
+        for letter in expected_lens:
+            assert len(collection[letter]) == expected_len[letter]
     
     def test_sound_digests_are_unique(self):
-        collection = collect_keystroke_data(base_dir=base_dir)
+        collection = collect_keystroke_data(base_dir=self.base_dir)
         used_digests = set()
         for data in collection:
             assert data['sound_digest'] not in used_digests
@@ -101,11 +103,13 @@ class TestCollectKeystrokeData:
             
     def test_ignore(self):
         ignore = {
-            'a': {0, 1, 2, 3, 4},
-            'b': {0, 1, 2},
+            'a-5x.wav': {0, 1, 3, 4},
+            'b-4x.wav': {0, 1, 2},
+            'd-3x.wav': {2},
+            'e-8x.wav': {6, 7},
         }
-        no_ignore = collect_keystroke_data(base_dir=base_dir)
-        with_ignore = collect_keystroke_data(base_dir=base_dir, ignore=ignore)
+        no_ignore = collect_keystroke_data(base_dir=self.base_dir)
+        with_ignore = collect_keystroke_data(base_dir=self.base_dir, ignore=ignore)
         num_ignores = sum([len([val for val in ignore[key]]) for key in ignore])
         assert len(no_ignore) - len(with_ignore) == num_ignores
         

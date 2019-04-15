@@ -105,8 +105,8 @@ Example:
 
 ## Testing [![CircleCI](https://circleci.com/gh/shoyo-inokuchi/acoustic-keylogger-research/tree/master.svg?style=svg)](https://circleci.com/gh/shoyo-inokuchi/acoustic-keylogger-research/tree/master)
 
-Tests are being implemented for the __src/dataman__ package, which contains various functions for audio
-processing and data management. Tests are contained within __src/test_dataman__.
+Tests are being implemented for the __custom_packages/dataman__ package, which contains various functions for audio
+processing and data management. These tests are contained in __tests/test_dataman__.
 
 To run tests with the Docker configuration (Option 1), execute:
 

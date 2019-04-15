@@ -1,14 +1,20 @@
-datasets/keystrokes_00
-datasets/silence-threshold-tests
-datasets/recordings
+# Ignore most datasets
+datasets/*
+!datasets/samples
+!datasets/extraction-tests
+!datasets/collection-tests
+!datasets/database-tests
+!datasets/keystrokes
 
+# Ignore cache
+__pycache__
+*/__pycache__
+.pytest_cache
+.ipynb_checkpoints
+
+# Other
 papers/
 recordings/
 brainstorm.txt
-
-__pycache__
-*/__pycache__
-.ipynb_checkpoints
-
 .idea
 .DS_Store

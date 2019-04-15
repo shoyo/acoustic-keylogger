@@ -1,5 +1,5 @@
 # Ignore most datasets
-datasets/
+datasets/*
 !datasets/samples
 !datasets/extraction-tests
 !datasets/collection-tests

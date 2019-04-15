@@ -19,12 +19,13 @@ from sqlalchemy.dialects import postgresql
 
 # File input (single WAV file -> sound file data)
 
-def wav_read(filepath, base='/env/'):
+def wav_read(filename, base_dir=None):
     """Return 1D NumPy array of wave-formatted audio data denoted by filename.
 
     Input should be a string containing the path to a wave-formatted audio file.
     File should be uncompressed 16-bit."""
-    sample_rate, data_2d = wav.read(base + filepath)
+    base_dir = base_dir or '/env/'
+    sample_rate, data_2d = wav.read(base_dir + filename)
     data_1d = [val for val, _ in data_2d]
     return np.array(data_1d)
 

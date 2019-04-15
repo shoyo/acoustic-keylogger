@@ -130,7 +130,7 @@ def visualize_keystrokes(filename, base_dir=None):
 
 # Data collection (multiple WAV files -> ALL keystroke data)
 
-def collect_keystroke_data(output=False, ignore=None):
+def collect_keystroke_data(base_dir='datasets/keystrokes/', output=False, ignore=None):
     """Read WAV files and return collected data.
 
     Arguments:
@@ -142,7 +142,6 @@ def collect_keystroke_data(output=False, ignore=None):
                      keystroke. Formatted like:
                          list(dict(keys: key type, sound digest, sound data))
     """
-    base_dir = 'datasets/keystrokes/'
     alphabet = [letter for letter in 'abcdefghijklmnopqrstuvwxyz']
     other_keys = ['space', 'period', 'enter']
     keys = alphabet + other_keys
@@ -155,14 +154,17 @@ def collect_keystroke_data(output=False, ignore=None):
             if output: print(f'  > Extracting keystrokes from "{file}"', end='')
             wav_data = wav_read(wav_dir + file)
             keystrokes = extract_keystrokes(wav_data)
-            for keystroke in keystrokes:
-                data = {
-                    'key_type': key,
-                    'sound_digest': hash(keystroke[:30].tobytes()),
-                    'sound_data': keystroke,
-                }
-                collection.append(data)
-            if output: print(f' => Found {len(keystrokes)} keystrokes')
+            added = 0
+            for i in range(len(keystrokes)):
+                if i not in ignore[file]:
+                    data = {
+                        'key_type': key,
+                        'sound_digest': hash(keystroke[:30].tobytes()),
+                        'sound_data': keystroke,
+                    }
+                    collection.append(data)
+                    added += 1
+            if output: print(f' => Added {added} keystrokes})')
     if output: print('> Done')
         
     return collection
@@ -186,9 +188,9 @@ class Keystroke(Base):
         return f'<Keystroke(key={self.key_type}, digest={self.sound_digest})>'
 
 
-def connect_to_database():
+def connect_to_database(url=os.environ['DATABASE_URL']):
     """Connect to database and return engine, connection, metadata."""
-    engine = db.create_engine(os.environ['DATABASE_URL'])
+    engine = db.create_engine(url)
     connection = engine.connect()
     return engine
 
@@ -205,12 +207,12 @@ def drop_keystroke_table():
     Keystroke.__table__.drop(engine)
 
 
-def store_keystroke_data(collected_data):
+def store_keystroke_data(collected_data, database_url):
     """Store collected data in database and return result proxy.
     
     input format  -- output of collect_keystroke_data()
     """
-    engine = connect_to_database()
+    engine = connect_to_database(database_url)
     Session = orm.sessionmaker(bind=engine)
     session = Session()
     try:
@@ -229,7 +231,7 @@ def store_keystroke_data(collected_data):
 
 # Data retrieval
 
-def load_keystroke_data():
+def load_keystroke_data(database_url):
     """Retrieve data from database, do relevant formatting, and return it.
 
     Return as a tuple of tuples of the form: (x, y)
@@ -238,7 +240,7 @@ def load_keystroke_data():
     This data will be passed to tf.keras.model.fit().
     For details, view documentation at: https://keras.io/models/model/#fit
     """
-    engine = connect_to_database()
+    engine = connect_to_database(database_url)
     Session = orm.sessionmaker(bind=engine)
     session = Session()
     keystrokes = session.query(Keystroke).all()

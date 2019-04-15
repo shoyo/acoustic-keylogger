@@ -21,7 +21,7 @@ from sqlalchemy.dialects import postgresql
 
 def wav_read(filename, base_dir=None):
     """Return 1D NumPy array of wave-formatted audio data denoted by filename.
-    
+
     Input should be a string containing the path to a wave-formatted audio file.
     File should be uncompressed 16-bit."""
     base_dir = base_dir or '/env/'
@@ -45,7 +45,7 @@ def silence_threshold(sound_data, n=5, factor=11):
     else:
         return max(np.amax(silence), abs(np.amin(silence))) * factor
 
-    
+
 def remove_random_noise(sound_data, threshold=None):
     """Return a copy of sound_data where random noise is replaced with 0s.
 
@@ -63,7 +63,7 @@ def remove_random_noise(sound_data, threshold=None):
 
 def extract_keystrokes(sound_data, sample_rate=44100):
     """Return slices of sound_data that denote each keystroke present.
-    
+
     Returned keystrokes are coerced to be the same length by appending trailing
     zeros.
 
@@ -88,9 +88,9 @@ def extract_keystrokes(sound_data, sample_rate=44100):
     :rtype            -- NumPy array of NumPy arrays
     """
     threshold          = silence_threshold(sound_data, 5)
-    keystroke_duration = 0.3   # seconds 
+    keystroke_duration = 0.3   # seconds
     len_sample         = int(sample_rate * keystroke_duration)
-    
+
     keystrokes = []
     i = 0
     while i < len(sound_data):
@@ -126,7 +126,7 @@ def visualize_keystrokes(filename, base_dir=None):
         plt.title(f'Index: {i}')
         plt.plot(keystrokes[i])
     plt.show()
-    
+
 
 # Data collection (multiple WAV files -> ALL keystroke data)
 
@@ -141,7 +141,7 @@ def collect_keystroke_data(base_dir='datasets/keystrokes/',
     keys     -- list of key types to extract (corresponds to file names)
     output   -- True to display status messages during keystroke extraction
     ignore   -- dict of filenames mapped to indices of keystrokes to ignore
-    
+
     input format  -- WAV files in subdirectories of "base_dir"
     output format -- list of dicts where each dict denotes a single collected
                      keystroke. Formatted like:
@@ -150,18 +150,22 @@ def collect_keystroke_data(base_dir='datasets/keystrokes/',
     alphabet = [letter for letter in 'abcdefghijklmnopqrstuvwxyz']
     other_keys = ['space', 'period', 'enter']
     keys = keys or alphabet + other_keys
-    
+
     collection = []
     for key in keys:
         wav_dir = base_dir + key + '/'
         if output: print(f'> Reading files from {wav_dir} for key "{key}"')
         for file in os.listdir(wav_dir):
-            if output: print(f'  > Extracting keystrokes from "{file}"', end='')
+            if output:
+                print(f'  > Extracting keystrokes from "{file}"', end='')
             wav_data = wav_read(wav_dir + file)
             keystrokes = extract_keystrokes(wav_data)
             collected = 0
             for i in range(len(keystrokes)):
-                if i not in ignore[file]:
+                if ignore and file in ignore and i in ignore[file]:
+                    continue
+                else:
+                    keystroke = keystrokes[i]
                     data = {
                         'key_type': key,
                         'sound_digest': hash(keystroke[:30].tobytes()),
@@ -171,7 +175,7 @@ def collect_keystroke_data(base_dir='datasets/keystrokes/',
                     collected += 1
             if output: print(f' => Collected {collected} keystrokes')
     if output: print('> Done')
-        
+
     return collection
 
 
@@ -214,7 +218,7 @@ def drop_keystroke_table():
 
 def store_keystroke_data(collected_data, database_url):
     """Store collected data in database and return result proxy.
-    
+
     input format  -- output of collect_keystroke_data()
     """
     engine = connect_to_database(database_url)
@@ -292,7 +296,7 @@ def load_keystroke_data_for_binary_classifier(classify={'space'}):
 
 def scale_keystroke_data(data):
     """Scale each value in data to an appropriate value between 0 and 1.
-    
+
     input format -- NumPy array of Numpy arrays
     """
     data_copy = deepcopy(data.astype(float))
@@ -300,4 +304,3 @@ def scale_keystroke_data(data):
         max_val, min_val = max(data_copy[i]), min(data_copy[i])
         data_copy[i] = (data_copy[i] - min_val) / (max_val - min_val)
     return data_copy
-

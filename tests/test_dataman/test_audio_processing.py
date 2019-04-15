@@ -34,7 +34,7 @@ class TestSilenceThreshold:
         random_noise = [rand.randint(-1000, 1001) for _ in range(100)]
         input = np.array(initial_silence + random_noise)
         assert silence_threshold(input, factor=1) == 0
-        
+
 
     def test_threshold_2(self):
         initial_silence = [rand.randint(-20, 21) for _ in range(44100*5 - 1)]
@@ -68,7 +68,7 @@ class TestExtractKeystrokes:
             input = wav_read(filename, base_dir=BASE_DIR)
             output = extract_keystrokes(input)
             assert len(output) == len(phrase)
-            
+
     def test_more_rapidly_typed_phrases(self):
         phrases = {
             'of_course_i_still_love_you_',
@@ -80,22 +80,23 @@ class TestExtractKeystrokes:
             input = wav_read(filename, base_dir=BASE_DIR)
             output = extract_keystrokes(input)
             assert len(output) != len(phrase)
-            
+
     def test_x(self):
         pass
-    
-    
+
+
 class TestCollectKeystrokeData:
-    base_dir = 'datsets/collection-tests/'
+    base_dir = 'datasets/collection-tests/'
     keys = ['a', 'b', 'c', 'd', 'e', 'f']
-    
+
     def test_standard_collection(self):
-        collection = collect_keystroke_data(base_dir=self.base_dir,
-                                            keys=self.keys)
+        c = collect_keystroke_data(base_dir=self.base_dir,
+                                   keys=self.keys)
         expected_len = {'a': 5, 'b': 8, 'c': 10, 'd': 3, 'e': 8, 'f': 2}
-        for letter in expected_lens:
-            assert len(collection[letter]) == expected_len[letter]
-    
+        for letter in expected_len:
+            actual_len = len([d for d in c if d['key_type'] == letter])
+            assert actual_len == expected_len[letter]
+
     def test_sound_digests_are_unique(self):
         collection = collect_keystroke_data(base_dir=self.base_dir,
                                             keys=self.keys)
@@ -103,36 +104,18 @@ class TestCollectKeystrokeData:
         for data in collection:
             assert data['sound_digest'] not in used_digests
             used_digests.add(data['sound_digest'])
-            
+
     def test_ignore(self):
         ignore = {
             'a-5x.wav': {0, 1, 3, 4},
-            'b-4x.wav': {0, 1, 2},
+            'b-5x.wav': {0, 1, 2},
             'd-3x.wav': {2},
             'e-8x.wav': {6, 7},
         }
         no_ignore = collect_keystroke_data(base_dir=self.base_dir,
-                                           keys=self.keys,
-                                           ignore=ignore)
+                                           keys=self.keys)
         with_ignore = collect_keystroke_data(base_dir=self.base_dir,
                                              keys=self.keys,
                                              ignore=ignore)
         num_ignore = sum([len([val for val in ignore[key]]) for key in ignore])
         assert len(no_ignore) - len(with_ignore) == num_ignore
-        
-        
-# class TestDatabaseOperations():
-#     url = os.environ['DATABASE_URL'] # Consider designating a separate test db
-#     base_dir = 'datasets/database-tests/'
-#     collection = collect_keystroke_data(base_dir)
-#     
-#     def test_connect_to_real_db(self):
-#         engine = connect_to_database(url)
-#         assert type(engine) == 
-#     
-#     def test
-#     
-#     
-#     
-# def test_scale_keystroke_data():
-#     pass

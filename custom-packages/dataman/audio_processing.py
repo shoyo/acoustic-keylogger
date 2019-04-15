@@ -130,12 +130,17 @@ def visualize_keystrokes(filename, base_dir=None):
 
 # Data collection (multiple WAV files -> ALL keystroke data)
 
-def collect_keystroke_data(base_dir='datasets/keystrokes/', output=False, ignore=None):
+def collect_keystroke_data(base_dir='datasets/keystrokes/',
+                           keys=None,
+                           output=False,
+                           ignore=None):
     """Read WAV files and return collected data.
 
     Arguments:
-    output -- True to display status messages of keystroke extraction.
-    ignore -- dict of filenames mapped to indices of keystrokes to ignore.
+    base_dir -- directory to search for audio files
+    keys     -- list of key types to extract (corresponds to file names)
+    output   -- True to display status messages during keystroke extraction
+    ignore   -- dict of filenames mapped to indices of keystrokes to ignore
     
     input format  -- WAV files in subdirectories of "base_dir"
     output format -- list of dicts where each dict denotes a single collected
@@ -144,7 +149,7 @@ def collect_keystroke_data(base_dir='datasets/keystrokes/', output=False, ignore
     """
     alphabet = [letter for letter in 'abcdefghijklmnopqrstuvwxyz']
     other_keys = ['space', 'period', 'enter']
-    keys = alphabet + other_keys
+    keys = keys or alphabet + other_keys
     
     collection = []
     for key in keys:
@@ -154,7 +159,7 @@ def collect_keystroke_data(base_dir='datasets/keystrokes/', output=False, ignore
             if output: print(f'  > Extracting keystrokes from "{file}"', end='')
             wav_data = wav_read(wav_dir + file)
             keystrokes = extract_keystrokes(wav_data)
-            added = 0
+            collected = 0
             for i in range(len(keystrokes)):
                 if i not in ignore[file]:
                     data = {
@@ -163,8 +168,8 @@ def collect_keystroke_data(base_dir='datasets/keystrokes/', output=False, ignore
                         'sound_data': keystroke,
                     }
                     collection.append(data)
-                    added += 1
-            if output: print(f' => Added {added} keystrokes})')
+                    collected += 1
+            if output: print(f' => Collected {collected} keystrokes')
     if output: print('> Done')
         
     return collection

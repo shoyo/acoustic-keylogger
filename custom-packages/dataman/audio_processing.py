@@ -19,13 +19,12 @@ from sqlalchemy.dialects import postgresql
 
 # File input (single WAV file -> sound file data)
 
-def wav_read(filename, base_dir=None):
+def wav_read(filepath, base='/env/'):
     """Return 1D NumPy array of wave-formatted audio data denoted by filename.
 
     Input should be a string containing the path to a wave-formatted audio file.
     File should be uncompressed 16-bit."""
-    base_dir = base_dir or '/env/'
-    sample_rate, data_2d = wav.read(base_dir + filename)
+    sample_rate, data_2d = wav.read(base + filepath)
     data_1d = [val for val, _ in data_2d]
     return np.array(data_1d)
 
@@ -197,7 +196,7 @@ class Keystroke(Base):
         return f'<Keystroke(key={self.key_type}, digest={self.sound_digest})>'
 
 
-def connect_to_database(url=os.environ['DATABASE_URL']):
+def connect_to_database(url=os.environ['TEST_DATABASE_URL']):
     """Connect to database and return engine, connection, metadata."""
     engine = db.create_engine(url)
     connection = engine.connect()

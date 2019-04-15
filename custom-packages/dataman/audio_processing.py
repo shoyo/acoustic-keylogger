@@ -19,13 +19,12 @@ from sqlalchemy.dialects import postgresql
 
 # File input (single WAV file -> sound file data)
 
-def wav_read(filename, base_dir=None):
+def wav_read(filepath):
     """Return 1D NumPy array of wave-formatted audio data denoted by filename.
 
     Input should be a string containing the path to a wave-formatted audio file.
     File should be uncompressed 16-bit."""
-    base_dir = base_dir or '/env/'
-    sample_rate, data_2d = wav.read(base_dir + filename)
+    sample_rate, data_2d = wav.read(filepath)
     data_1d = [val for val, _ in data_2d]
     return np.array(data_1d)
 
@@ -111,9 +110,9 @@ def extract_keystrokes(sound_data, sample_rate=44100):
 
 # Display extracted keystrokes (WAV file -> all keystroke graphs)
 
-def visualize_keystrokes(filename, base_dir=None):
-    """Display each keystroke contained in WAV file specified by filename."""
-    wav_data = wav_read(filename, base_dir)
+def visualize_keystrokes(filepath, base_dir='/env/'):
+    """Display each keystroke contained in WAV file specified by filepath."""
+    wav_data = wav_read(filepath, base_dir)
     keystrokes = extract_keystrokes(wav_data)
     n = len(keystrokes)
     print(f'Number of keystrokes detected in "{filename}": {n}')
@@ -130,7 +129,7 @@ def visualize_keystrokes(filename, base_dir=None):
 
 # Data collection (multiple WAV files -> ALL keystroke data)
 
-def collect_keystroke_data(base_dir='datasets/keystrokes/',
+def collect_keystroke_data(filepath_base='datasets/keystrokes/',
                            keys=None,
                            output=False,
                            ignore=None):
@@ -153,12 +152,12 @@ def collect_keystroke_data(base_dir='datasets/keystrokes/',
 
     collection = []
     for key in keys:
-        wav_dir = base_dir + key + '/'
-        if output: print(f'> Reading files from {wav_dir} for key "{key}"')
-        for file in os.listdir(wav_dir):
+        filepath = filepath_base + key + '/'
+        if output: print(f'> Reading files from {filepath} for key "{key}"')
+        for file in os.listdir(filepath):
             if output:
                 print(f'  > Extracting keystrokes from "{file}"', end='')
-            wav_data = wav_read(wav_dir + file)
+            wav_data = wav_read(filepath + file)
             keystrokes = extract_keystrokes(wav_data)
             collected = 0
             for i in range(len(keystrokes)):

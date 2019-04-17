@@ -55,8 +55,12 @@ option here.
 * Make sure Python can find custom packages for this repository with
  
         $ export PYTHONPATH=/path/to/repo/acoustic-keylogger-research/custom-packages
+
+  and can connect to the test database with
+
+        $ export TEST_DATABASE_URL=postgresql+psycopg2://postgres@acoustic-keylogger-research_db_1:5432
         
-  I recommend adding this command to your `~/.bash_profile` or `~/.bashrc` so that it gets loaded between terminal sessions.
+  I recommend adding these command to your `~/.bash_profile` or `~/.bashrc` so that it gets loaded between terminal sessions.
 
 * Open Jupyter notebook with 
         

@@ -2,6 +2,7 @@
 Written by Shoyo Inokuchi (April 2019)
 
 Tests for "audio_processing.py" in "database_management" package.
+Tests are expected to be run from the base directory of the repository.
 """
 import pytest
 import numpy as np

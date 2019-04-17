@@ -129,7 +129,7 @@ def visualize_keystrokes(filepath):
 
 # Data collection (multiple WAV files -> ALL keystroke data)
 
-def collect_keystroke_data(filepath_base='datasets/keystrokes/',
+def collect_keystroke_data(filepath_base='/env/datasets/keystrokes/',
                            keys=None,
                            output=False,
                            ignore=None):
@@ -203,24 +203,33 @@ def connect_to_database(url=os.environ['TEST_DATABASE_URL']):
     return engine
 
 
-def create_keystroke_table():
+def create_keystroke_table(database_url='default'):
     """Create keystroke table in database."""
-    engine = connect_to_database()
+    if database_url == 'default':
+        engine = connect_to_database()
+    else:
+        engine = connect_to_database(database_url)
     Base.metadata.create_all(engine)
 
 
-def drop_keystroke_table():
+def drop_keystroke_table(database_url='default'):
     """Drop keystroke table in database."""
-    engine = connect_to_database()
+    if database_url == 'default':
+        engine = connect_to_database()
+    else:
+        engine = connect_to_database(database_url)
     Keystroke.__table__.drop(engine)
 
 
-def store_keystroke_data(collected_data, database_url):
+def store_keystroke_data(collected_data, database_url='default'):
     """Store collected data in database and return result proxy.
 
     input format  -- output of collect_keystroke_data()
     """
-    engine = connect_to_database(database_url)
+    if database_url == 'default':
+        engine = connect_to_database()
+    else:
+        engine = connect_to_database(database_url)
     Session = orm.sessionmaker(bind=engine)
     session = Session()
     try:
@@ -239,7 +248,7 @@ def store_keystroke_data(collected_data, database_url):
 
 # Data retrieval
 
-def load_keystroke_data(database_url):
+def load_keystroke_data(database_url='default'):
     """Retrieve data from database, do relevant formatting, and return it.
 
     Return as a tuple of tuples of the form: (x, y)
@@ -248,7 +257,10 @@ def load_keystroke_data(database_url):
     This data will be passed to tf.keras.model.fit().
     For details, view documentation at: https://keras.io/models/model/#fit
     """
-    engine = connect_to_database(database_url)
+    if database_url == 'default':
+        engine = connect_to_database()
+    else:
+        engine = connect_to_database(database_url)
     Session = orm.sessionmaker(bind=engine)
     session = Session()
     keystrokes = session.query(Keystroke).all()
@@ -270,9 +282,13 @@ def load_keystroke_data(database_url):
     return np.array(data), np.array(labels)
 
 
-def load_keystroke_data_for_binary_classifier(classify={'space'}):
+def load_keystroke_data_for_binary_classifier(classify={'space'},
+                                              database_url='default'):
     """Load data from database for a binary classifier."""
-    engine = connect_to_database()
+    if database_url == 'default':
+        engine = connect_to_database()
+    else:
+        engine = connect_to_database(database_url)
     Session = orm.sessionmaker(bind=engine)
     session = Session()
     keystrokes = session.query(Keystroke).all()

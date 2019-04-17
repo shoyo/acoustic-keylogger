@@ -55,8 +55,12 @@ option here.
 * Make sure Python can find custom packages for this repository with
  
         $ export PYTHONPATH=/path/to/repo/acoustic-keylogger-research/custom-packages
+
+  and can connect to the test database with
+
+        $ export TEST_DATABASE_URL=postgresql+psycopg2://postgres@acoustic-keylogger-research_db_1:5432
         
-  I recommend adding this command to your `~/.bash_profile` or `~/.bashrc` so that it gets loaded between terminal sessions.
+  I recommend adding these command to your `~/.bash_profile` or `~/.bashrc` so that it gets loaded between terminal sessions.
 
 * Open Jupyter notebook with 
         
@@ -105,8 +109,8 @@ Example:
 
 ## Testing [![CircleCI](https://circleci.com/gh/shoyo-inokuchi/acoustic-keylogger-research/tree/master.svg?style=svg)](https://circleci.com/gh/shoyo-inokuchi/acoustic-keylogger-research/tree/master)
 
-Tests are being implemented for the __src/dataman__ package, which contains various functions for audio
-processing and data management. Tests are contained within __src/test_dataman__.
+Tests are being implemented for the __custom_packages/dataman__ package, which contains various functions for audio
+processing and data management. These tests are contained in __tests/test_dataman__.
 
 To run tests with the Docker configuration (Option 1), execute:
 

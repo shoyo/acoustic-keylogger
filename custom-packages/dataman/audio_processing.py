@@ -19,13 +19,12 @@ from sqlalchemy.dialects import postgresql
 
 # File input (single WAV file -> sound file data)
 
-def wav_read(filename, base_dir=None):
+def wav_read(filepath):
     """Return 1D NumPy array of wave-formatted audio data denoted by filename.
-    
+
     Input should be a string containing the path to a wave-formatted audio file.
     File should be uncompressed 16-bit."""
-    base_dir = base_dir or '/env/'
-    sample_rate, data_2d = wav.read(base_dir + filename)
+    sample_rate, data_2d = wav.read(filepath)
     data_1d = [val for val, _ in data_2d]
     return np.array(data_1d)
 
@@ -45,7 +44,7 @@ def silence_threshold(sound_data, n=5, factor=11):
     else:
         return max(np.amax(silence), abs(np.amin(silence))) * factor
 
-    
+
 def remove_random_noise(sound_data, threshold=None):
     """Return a copy of sound_data where random noise is replaced with 0s.
 
@@ -63,7 +62,7 @@ def remove_random_noise(sound_data, threshold=None):
 
 def extract_keystrokes(sound_data, sample_rate=44100):
     """Return slices of sound_data that denote each keystroke present.
-    
+
     Returned keystrokes are coerced to be the same length by appending trailing
     zeros.
 
@@ -88,9 +87,9 @@ def extract_keystrokes(sound_data, sample_rate=44100):
     :rtype            -- NumPy array of NumPy arrays
     """
     threshold          = silence_threshold(sound_data, 5)
-    keystroke_duration = 0.3   # seconds 
+    keystroke_duration = 0.3   # seconds
     len_sample         = int(sample_rate * keystroke_duration)
-    
+
     keystrokes = []
     i = 0
     while i < len(sound_data):
@@ -111,12 +110,12 @@ def extract_keystrokes(sound_data, sample_rate=44100):
 
 # Display extracted keystrokes (WAV file -> all keystroke graphs)
 
-def visualize_keystrokes(filename, base_dir=None):
-    """Display each keystroke contained in WAV file specified by filename."""
-    wav_data = wav_read(filename, base_dir)
+def visualize_keystrokes(filepath):
+    """Display each keystroke contained in WAV file specified by filepath."""
+    wav_data = wav_read(filepath)
     keystrokes = extract_keystrokes(wav_data)
     n = len(keystrokes)
-    print(f'Number of keystrokes detected in "{filename}": {n}')
+    print(f'Number of keystrokes detected in "{filepath}": {n}')
     print('Drawing keystrokes...')
     num_cols = 3
     num_rows = n/num_cols + 1
@@ -126,45 +125,56 @@ def visualize_keystrokes(filename, base_dir=None):
         plt.title(f'Index: {i}')
         plt.plot(keystrokes[i])
     plt.show()
-    
+
 
 # Data collection (multiple WAV files -> ALL keystroke data)
 
-def collect_keystroke_data(output=False, ignore=None):
+def collect_keystroke_data(filepath_base='datasets/keystrokes/',
+                           keys=None,
+                           output=False,
+                           ignore=None):
     """Read WAV files and return collected data.
 
     Arguments:
-    output -- True to display status messages of keystroke extraction.
-    ignore -- dict of filenames mapped to indices of keystrokes to ignore.
-    
+    base_dir -- directory to search for audio files
+    keys     -- list of key types to extract (corresponds to file names)
+    output   -- True to display status messages during keystroke extraction
+    ignore   -- dict of filenames mapped to indices of keystrokes to ignore
+
     input format  -- WAV files in subdirectories of "base_dir"
     output format -- list of dicts where each dict denotes a single collected
                      keystroke. Formatted like:
                          list(dict(keys: key type, sound digest, sound data))
     """
-    base_dir = 'datasets/keystrokes/'
     alphabet = [letter for letter in 'abcdefghijklmnopqrstuvwxyz']
     other_keys = ['space', 'period', 'enter']
-    keys = alphabet + other_keys
-    
+    keys = keys or alphabet + other_keys
+
     collection = []
     for key in keys:
-        wav_dir = base_dir + key + '/'
-        if output: print(f'> Reading files from {wav_dir} for key "{key}"')
-        for file in os.listdir(wav_dir):
-            if output: print(f'  > Extracting keystrokes from "{file}"', end='')
-            wav_data = wav_read(wav_dir + file)
+        filepath = filepath_base + key + '/'
+        if output: print(f'> Reading files from {filepath} for key "{key}"')
+        for file in os.listdir(filepath):
+            if output:
+                print(f'  > Extracting keystrokes from "{file}"', end='')
+            wav_data = wav_read(filepath + file)
             keystrokes = extract_keystrokes(wav_data)
-            for keystroke in keystrokes:
-                data = {
-                    'key_type': key,
-                    'sound_digest': hash(keystroke[:30].tobytes()),
-                    'sound_data': keystroke,
-                }
-                collection.append(data)
-            if output: print(f' => Found {len(keystrokes)} keystrokes')
+            collected = 0
+            for i in range(len(keystrokes)):
+                if ignore and file in ignore and i in ignore[file]:
+                    continue
+                else:
+                    keystroke = keystrokes[i]
+                    data = {
+                        'key_type': key,
+                        'sound_digest': hash(keystroke[:30].tobytes()),
+                        'sound_data': keystroke,
+                    }
+                    collection.append(data)
+                    collected += 1
+            if output: print(f' => Collected {collected} keystrokes')
     if output: print('> Done')
-        
+
     return collection
 
 
@@ -186,9 +196,9 @@ class Keystroke(Base):
         return f'<Keystroke(key={self.key_type}, digest={self.sound_digest})>'
 
 
-def connect_to_database():
+def connect_to_database(url=os.environ['TEST_DATABASE_URL']):
     """Connect to database and return engine, connection, metadata."""
-    engine = db.create_engine(os.environ['DATABASE_URL'])
+    engine = db.create_engine(url)
     connection = engine.connect()
     return engine
 
@@ -205,12 +215,12 @@ def drop_keystroke_table():
     Keystroke.__table__.drop(engine)
 
 
-def store_keystroke_data(collected_data):
+def store_keystroke_data(collected_data, database_url):
     """Store collected data in database and return result proxy.
-    
+
     input format  -- output of collect_keystroke_data()
     """
-    engine = connect_to_database()
+    engine = connect_to_database(database_url)
     Session = orm.sessionmaker(bind=engine)
     session = Session()
     try:
@@ -229,7 +239,7 @@ def store_keystroke_data(collected_data):
 
 # Data retrieval
 
-def load_keystroke_data():
+def load_keystroke_data(database_url):
     """Retrieve data from database, do relevant formatting, and return it.
 
     Return as a tuple of tuples of the form: (x, y)
@@ -238,7 +248,7 @@ def load_keystroke_data():
     This data will be passed to tf.keras.model.fit().
     For details, view documentation at: https://keras.io/models/model/#fit
     """
-    engine = connect_to_database()
+    engine = connect_to_database(database_url)
     Session = orm.sessionmaker(bind=engine)
     session = Session()
     keystrokes = session.query(Keystroke).all()
@@ -285,7 +295,7 @@ def load_keystroke_data_for_binary_classifier(classify={'space'}):
 
 def scale_keystroke_data(data):
     """Scale each value in data to an appropriate value between 0 and 1.
-    
+
     input format -- NumPy array of Numpy arrays
     """
     data_copy = deepcopy(data.astype(float))
@@ -293,4 +303,3 @@ def scale_keystroke_data(data):
         max_val, min_val = max(data_copy[i]), min(data_copy[i])
         data_copy[i] = (data_copy[i] - min_val) / (max_val - min_val)
     return data_copy
-

@@ -1,8 +1,3 @@
-1
-/var/lib/postgresql/data
-1555050434
-5432
-/var/run/postgresql
-*
-  5432001         0
-ready   
+version https://git-lfs.github.com/spec/v1
+oid sha256:0f637aa87fe3d5d14a49fe62c72d7f4e983ed483c5fe7149ab28d7ba6f97e35f
+size 94

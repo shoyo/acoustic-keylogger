@@ -110,12 +110,12 @@ def extract_keystrokes(sound_data, sample_rate=44100):
 
 # Display extracted keystrokes (WAV file -> all keystroke graphs)
 
-def visualize_keystrokes(filepath, base_dir='/env/'):
+def visualize_keystrokes(filepath):
     """Display each keystroke contained in WAV file specified by filepath."""
-    wav_data = wav_read(filepath, base_dir)
+    wav_data = wav_read(filepath)
     keystrokes = extract_keystrokes(wav_data)
     n = len(keystrokes)
-    print(f'Number of keystrokes detected in "{filename}": {n}')
+    print(f'Number of keystrokes detected in "{filepath}": {n}')
     print('Drawing keystrokes...')
     num_cols = 3
     num_rows = n/num_cols + 1

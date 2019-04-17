@@ -4,7 +4,6 @@ datasets/*
 !datasets/extraction-tests
 !datasets/collection-tests
 !datasets/database-tests
-!datasets/keystrokes
 
 # Ignore cache
 __pycache__

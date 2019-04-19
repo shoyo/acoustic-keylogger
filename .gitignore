@@ -5,6 +5,9 @@ datasets/*
 !datasets/collection-tests
 !datasets/database-tests
 
+# Ignore database (for now)
+db/
+
 # Ignore cache
 __pycache__
 */__pycache__

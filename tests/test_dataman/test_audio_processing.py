@@ -161,7 +161,7 @@ class TestDatabaseOperations:
             session.query(KeystrokeTest).all()
         session.close()
 
-    def test_store_keystroke_data(self):
+    def test_store_keystroke_data_and_retrieval(self):
         # Initialize database and data to be stored
         fpb = 'datasets/collection-tests/'
         keys = ['a', 'b', 'c', 'd', 'e', 'f']
@@ -176,12 +176,10 @@ class TestDatabaseOperations:
         Session = orm.sessionmaker(bind=engine)
         session = Session()
         query = session.query(KeystrokeTest).all()
+        session.close()
         assert type(query) == list
         assert len(query) == 36
 
-    def test_retrieve_keystroke_data(self):
-        pass
-
     def test_load_keystroke_data(self):
-        pass
+        pass        
         

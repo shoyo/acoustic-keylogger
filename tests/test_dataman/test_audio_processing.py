@@ -135,5 +135,4 @@ class TestDatabaseOperations:
         query = session.query(KeystrokeTest).all()
         assert type(query) == sqlalchemy.orm.query.Query
 
-    def test_drop_keystroke
         

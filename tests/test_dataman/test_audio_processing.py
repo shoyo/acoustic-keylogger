@@ -162,7 +162,22 @@ class TestDatabaseOperations:
         session.close()
 
     def test_store_keystroke_data(self):
-        pass
+        # Initialize database and data to be stored
+        fpb = 'datasets/collection-tests/'
+        keys = ['a', 'b', 'c', 'd', 'e', 'f']
+        c = collect_keystroke_data(filepath_base=fpb, keys=keys)
+        create_keystroke_table(self.url)
+
+        # Store data in database
+        store_keystroke_test_data(c, url=self.url)
+
+        # Assert that storage was succesful by making a query
+        engine = connect_to_database(self.url)
+        Session = orm.sessionmaker(bind=engine)
+        session = Session()
+        query = session.query(KeystrokeTest).all()
+        assert type(query) == list
+        assert len(query) == 36
 
     def test_retrieve_keystroke_data(self):
         pass

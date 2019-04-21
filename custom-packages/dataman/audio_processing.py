@@ -254,6 +254,25 @@ def store_keystroke_data(data, url=os.environ['TEST_DATABASE_URL']):
         session.close()
 
 
+def store_keystroke_test_data(data, url):
+    """Store collected data in database. For testing."""
+    engine = connect_to_database(url)
+    Session = orm.sessionmaker(bind=engine)
+    session = Session()
+    try:
+        for keystroke in data:
+            entry = KeystrokeTest(key_type=keystroke['key_type'],
+                                  sound_digest=keystroke['sound_digest'],
+                                  sound_data=keystroke['sound_data'])
+            session.add(entry)
+        session.commit()
+    except:
+        session.rollback()
+        raise
+    finally:
+        session.close()
+
+
 # Data retrieval
 
 def load_keystroke_data(url=os.environ['TEST_DATABASE_URL']):

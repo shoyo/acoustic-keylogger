@@ -215,7 +215,7 @@ def connect_to_database(url=os.environ['TEST_DATABASE_URL']):
 
 
 def create_keystroke_table(url=os.environ['TEST_DATABASE_URL']):
-    """Create keystroke table in database."""
+    """Create keystroke table and test table in database."""
     engine = connect_to_database(url)
     Base.metadata.create_all(engine)
 
@@ -224,6 +224,12 @@ def drop_keystroke_table(url=os.environ['TEST_DATABASE_URL']):
     """Drop keystroke table in database."""
     engine = connect_to_database(url)
     Keystroke.__table__.drop(engine)
+
+
+def drop_keystroke_test_table(url):
+    """Drop test keystroke table in database. For testing."""
+    engine = connect_to_database(url)
+    KeystrokeTest.__table__.drop(engine)
 
 
 def store_keystroke_data(data, url=os.environ['TEST_DATABASE_URL']):

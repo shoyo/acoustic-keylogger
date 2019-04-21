@@ -133,17 +133,18 @@ class TestDatabaseOperations:
 
         # Assert that table does not exist by making a query
         session = Session()
-        with pytest.raises(sqlalchemy.exc.ProgrammingError):
-            session.query(KeystrokeTest)
+        with pytest.raises(sqlalchemy.exc.InternalError):
+            session.query(KeystrokeTest).all()
         session.close()
 
         create_keystroke_table(self.url)
 
         # Assert that table exists by making a query
         session = Session()
-        query = session.query(KeystrokeTest)
+        query = session.query(KeystrokeTest).all()
         session.close()
         assert type(query) == sqlalchemy.orm.query.Query
+        assert query == []
 
     def test_drop_keystroke_table(self):
         engine = connect_to_database(self.url)
@@ -151,12 +152,12 @@ class TestDatabaseOperations:
 
         # Create and drop table
         create_keystroke_table(self.url)
-        drop_keystroke_table()
+        drop_keystroke_test_table(self.url)
 
-        # Assert that table is dropped by makign a query
+        # Assert that table is dropped by making a query
         session = Session()
-        with pytest.raises(sqlalchemy.exc.ProgrammingError):
-            session.query(KeystrokeTest)
+        with pytest.raises(sqlalchemy.exc.InternalError):
+            session.query(KeystrokeTest).all()
         session.close()
 
     def test_store_keystroke_data(self):

@@ -133,7 +133,7 @@ class TestDatabaseOperations:
 
         # Assert that table does not exist by making a query
         session = Session()
-        with pytest.raises(Exception):
+        with pytest.raises(sqlalchemy.exc.ProgrammingError):
             session.query(KeystrokeTest)
         session.close()
 
@@ -155,7 +155,7 @@ class TestDatabaseOperations:
 
         # Assert that table is dropped by makign a query
         session = Session()
-        with pytest.raises(Exception)
+        with pytest.raises(sqlalchemy.exc.ProgrammingError):
             session.query(KeystrokeTest)
         session.close()
 

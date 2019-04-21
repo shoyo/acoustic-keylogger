@@ -226,12 +226,12 @@ def drop_keystroke_table():
     Keystroke.__table__.drop(engine)
 
 
-def store_keystroke_data(collected_data, database_url):
+def store_keystroke_data(collected_data):
     """Store collected data in database.
 
     input format  -- output of collect_keystroke_data()
     """
-    engine = connect_to_database(database_url)
+    engine = connect_to_database()
     Session = orm.sessionmaker(bind=engine)
     session = Session()
     try:
@@ -250,7 +250,7 @@ def store_keystroke_data(collected_data, database_url):
 
 # Data retrieval
 
-def load_keystroke_data(database_url):
+def load_keystroke_data():
     """Retrieve data from database, do relevant formatting, and return it.
 
     Return as a tuple of tuples of the form: (x, y)
@@ -259,7 +259,7 @@ def load_keystroke_data(database_url):
     This data will be passed to tf.keras.model.fit().
     For details, view documentation at: https://keras.io/models/model/#fit
     """
-    engine = connect_to_database(database_url)
+    engine = connect_to_database()
     Session = orm.sessionmaker(bind=engine)
     session = Session()
     keystrokes = session.query(Keystroke).all()

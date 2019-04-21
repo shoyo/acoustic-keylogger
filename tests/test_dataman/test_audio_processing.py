@@ -121,12 +121,14 @@ class TestCollectKeystrokeData:
 
 
 class TestDatabaseOperations:
+    url = 'postgresql+psycopg2://postgres@acoustickeyloggerresearch_db_1:5432'
+
     def test_connect_to_database(self):
-        engine = connect_to_database()
+        engine = connect_to_database(self.url)
         assert type(engine) == sqlalchemy.engine.base.Engine
 
     def test_create_keystroke_table(self):
-        engine = connect_to_database()
+        engine = connect_to_database(self.url)
         Session = orm.sessionmaker(bind=engine)
         session = Session()
         with pytest.raises(psycopg2.errors.UndefinedTable):
@@ -135,4 +137,15 @@ class TestDatabaseOperations:
         query = session.query(KeystrokeTest).all()
         assert type(query) == sqlalchemy.orm.query.Query
 
+    def test_drop_keystroke(self):
+        pass
+
+    def test_store_keystroke_data(self):
+        pass
+
+    def test_retrieve_keystroke_data(self):
+        pass
+
+    def test_load_keystroke_data(self):
+        pass
         

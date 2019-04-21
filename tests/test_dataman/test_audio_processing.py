@@ -132,10 +132,10 @@ class TestDatabaseOperations:
         Session = orm.sessionmaker(bind=engine)
         session = Session()
         with pytest.raises(Exception):
-            session.query(KeystrokeTest).all()
+            session.query(KeystrokeTest)
         create_keystroke_table(self.url)
         session = Session()
-        query = session.query(KeystrokeTest).all()
+        query = session.query(KeystrokeTest)
         assert type(query) == sqlalchemy.orm.query.Query
 
     def test_drop_keystroke(self):

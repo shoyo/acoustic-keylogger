@@ -199,7 +199,7 @@ class Keystroke(Base):
 
 class KeystrokeTest(Base):
     """Schema for testing."""
-    __tablename__ = 'SampleKeystroke'
+    __tablename__ = 'test_keystrokes'
 
     id = db.Column(db.BigInteger, primary_key=True)
     key_type = db.Column(db.String(32), nullable=False)

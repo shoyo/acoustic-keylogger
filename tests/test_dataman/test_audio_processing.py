@@ -131,7 +131,7 @@ class TestDatabaseOperations:
         engine = connect_to_database(self.url)
         Session = orm.sessionmaker(bind=engine)
         session = Session()
-        with pytest.raises(psycopg2.errors.UndefinedTable):
+        with pytest.raises(psycopg2.ProgrammingError):
             session.query(KeystrokeTest).all()
         create_keystroke_table()
         query = session.query(KeystrokeTest).all()

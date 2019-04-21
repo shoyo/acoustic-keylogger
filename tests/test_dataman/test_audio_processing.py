@@ -133,7 +133,8 @@ class TestDatabaseOperations:
 
         # Assert that table does not exist by making a query
         session = Session()
-        with pytest.raises(sqlalchemy.exc.InternalError):
+        with pytest.raises((sqlalchemy.exc.ProgrammingError,
+                            sqlalchemy.exc.InternalError)):
             session.query(KeystrokeTest).all()
         session.close()
 

@@ -134,6 +134,7 @@ class TestDatabaseOperations:
         with pytest.raises(Exception):
             session.query(KeystrokeTest).all()
         create_keystroke_table(self.url)
+        session = Session()
         query = session.query(KeystrokeTest).all()
         assert type(query) == sqlalchemy.orm.query.Query
 

@@ -130,9 +130,10 @@ class TestDatabaseOperations:
         Session = orm.sessionmaker(bind=engine)
         session = Session()
         with pytest.raises(psycopg2.errors.UndefinedTable):
-            session.query(KeystrokeTest)
+            session.query(KeystrokeTest).all()
         create_keystroke_table()
-        query = session.query(KeystrokeTest)
+        query = session.query(KeystrokeTest).all()
         assert type(query) == sqlalchemy.orm.query.Query
 
+    def test_drop_keystroke
         

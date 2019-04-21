@@ -6,6 +6,9 @@ Tests for "audio_processing.py" in "database_management" package.
 import pytest
 import numpy as np
 import numpy.random as rand
+import sqlalchemy
+import sqlalchemy.orm as orm
+import psycopg2
 
 from dataman.audio_processing import *
 
@@ -115,3 +118,70 @@ class TestCollectKeystrokeData:
                                              ignore=ignore)
         num_ignore = sum([len([v for v in ignore[key]]) for key in ignore])
         assert len(no_ignore) - len(with_ignore) == num_ignore
+
+
+class TestDatabaseOperations:
+    url = 'postgresql+psycopg2://postgres@acoustickeyloggerresearch_db_1:5432'
+
+    def test_connect_to_database(self):
+        engine = connect_to_database(self.url)
+        assert type(engine) == sqlalchemy.engine.base.Engine
+
+    def test_create_keystroke_table(self):
+        engine = connect_to_database(self.url)
+        Session = orm.sessionmaker(bind=engine)
+
+        # Assert that table does not exist by making a query
+        session = Session()
+        with pytest.raises((sqlalchemy.exc.ProgrammingError,
+                            sqlalchemy.exc.InternalError)):
+            session.query(KeystrokeTest).all()
+        session.close()
+
+        create_keystroke_table(self.url)
+
+        # Assert that table exists by making a query
+        session = Session()
+        query = session.query(KeystrokeTest).all()
+        session.close()
+        assert query == []
+
+    def test_drop_keystroke_table(self):
+        engine = connect_to_database(self.url)
+        Session = orm.sessionmaker(bind=engine)
+
+        # Create and drop table
+        create_keystroke_table(self.url)
+        drop_keystroke_test_table(self.url)
+
+        # Assert that table is dropped by making a query
+        session = Session()
+        with pytest.raises((sqlalchemy.exc.ProgrammingError,
+                            sqlalchemy.exc.InternalError)):
+            session.query(KeystrokeTest).all()
+        session.close()
+
+    def test_store_keystroke_data(self):
+        # Initialize database and data to be stored
+        fpb = 'datasets/collection-tests/'
+        keys = ['a', 'b', 'c', 'd', 'e', 'f']
+        c = collect_keystroke_data(filepath_base=fpb, keys=keys)
+        create_keystroke_table(self.url)
+
+        # Store data in database
+        store_keystroke_test_data(c, url=self.url)
+
+        # Assert that storage was succesful by making a query
+        engine = connect_to_database(self.url)
+        Session = orm.sessionmaker(bind=engine)
+        session = Session()
+        query = session.query(KeystrokeTest).all()
+        assert type(query) == list
+        assert len(query) == 36
+
+    def test_retrieve_keystroke_data(self):
+        pass
+
+    def test_load_keystroke_data(self):
+        pass
+        

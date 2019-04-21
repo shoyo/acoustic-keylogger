@@ -23,7 +23,7 @@ def wav_read(filepath):
     """Return 1D NumPy array of wave-formatted audio data denoted by filename.
 
     Input should be a string containing the path to a wave-formatted audio file.
-    File should be uncompressed 16-bit."""
+    """
     sample_rate, data_2d = wav.read(filepath)
     data_1d = [val for val, _ in data_2d]
     return np.array(data_1d)
@@ -33,6 +33,7 @@ def wav_read(filepath):
 
 def silence_threshold(sound_data, n=5, factor=11):
     """Return the silence threshold of the sound data.
+
     The sound data should begin with n-seconds of silence.
     """
     sampling_rate = 44100
@@ -46,7 +47,7 @@ def silence_threshold(sound_data, n=5, factor=11):
 
 
 def remove_random_noise(sound_data, threshold=None):
-    """Return a copy of sound_data where random noise is replaced with 0s.
+    """Return a copy of sound_data where random noise is replaced with 0's.
 
     The original sound_data is not mutated.
     """
@@ -196,38 +197,73 @@ class Keystroke(Base):
         return f'<Keystroke(key={self.key_type}, digest={self.sound_digest})>'
 
 
+class KeystrokeTest(Base):
+    """Schema for testing."""
+    __tablename__ = 'test_keystrokes'
+
+    id = db.Column(db.BigInteger, primary_key=True)
+    key_type = db.Column(db.String(32), nullable=False)
+    sound_digest = db.Column(db.BigInteger, nullable=False, unique=True)
+    sound_data = db.Column(postgresql.ARRAY(db.Integer))
+
+
 def connect_to_database(url=os.environ['TEST_DATABASE_URL']):
-    """Connect to database and return engine, connection, metadata."""
+    """Connect to database and return corresponding engine instance."""
     engine = db.create_engine(url)
     connection = engine.connect()
     return engine
 
 
-def create_keystroke_table():
-    """Create keystroke table in database."""
-    engine = connect_to_database()
+def create_keystroke_table(url=os.environ['TEST_DATABASE_URL']):
+    """Create keystroke table and test table in database."""
+    engine = connect_to_database(url)
     Base.metadata.create_all(engine)
 
 
-def drop_keystroke_table():
+def drop_keystroke_table(url=os.environ['TEST_DATABASE_URL']):
     """Drop keystroke table in database."""
-    engine = connect_to_database()
+    engine = connect_to_database(url)
     Keystroke.__table__.drop(engine)
 
 
-def store_keystroke_data(collected_data, database_url):
-    """Store collected data in database and return result proxy.
+def drop_keystroke_test_table(url):
+    """Drop test keystroke table in database. For testing."""
+    engine = connect_to_database(url)
+    KeystrokeTest.__table__.drop(engine)
+
+
+def store_keystroke_data(data, url=os.environ['TEST_DATABASE_URL']):
+    """Store collected data in database.
 
     input format  -- output of collect_keystroke_data()
     """
-    engine = connect_to_database(database_url)
+    engine = connect_to_database(url)
     Session = orm.sessionmaker(bind=engine)
     session = Session()
     try:
-        for data in collected_data:
-            entry = Keystroke(key_type=data['key_type'],
-                              sound_digest=data['sound_digest'],
-                              sound_data=data['sound_data'])
+        for keystroke in data:
+            entry = Keystroke(key_type=keystroke['key_type'],
+                              sound_digest=keystroke['sound_digest'],
+                              sound_data=keystroke['sound_data'])
+            session.add(entry)
+        session.commit()
+    except:
+        session.rollback()
+        raise
+    finally:
+        session.close()
+
+
+def store_keystroke_test_data(data, url):
+    """Store collected data in database. For testing."""
+    engine = connect_to_database(url)
+    Session = orm.sessionmaker(bind=engine)
+    session = Session()
+    try:
+        for keystroke in data:
+            entry = KeystrokeTest(key_type=keystroke['key_type'],
+                                  sound_digest=keystroke['sound_digest'],
+                                  sound_data=keystroke['sound_data'])
             session.add(entry)
         session.commit()
     except:
@@ -239,7 +275,7 @@ def store_keystroke_data(collected_data, database_url):
 
 # Data retrieval
 
-def load_keystroke_data(database_url):
+def load_keystroke_data(url=os.environ['TEST_DATABASE_URL']):
     """Retrieve data from database, do relevant formatting, and return it.
 
     Return as a tuple of tuples of the form: (x, y)
@@ -248,7 +284,7 @@ def load_keystroke_data(database_url):
     This data will be passed to tf.keras.model.fit().
     For details, view documentation at: https://keras.io/models/model/#fit
     """
-    engine = connect_to_database(database_url)
+    engine = connect_to_database(url)
     Session = orm.sessionmaker(bind=engine)
     session = Session()
     keystrokes = session.query(Keystroke).all()

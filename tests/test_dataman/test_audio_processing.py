@@ -6,6 +6,9 @@ Tests for "audio_processing.py" in "database_management" package.
 import pytest
 import numpy as np
 import numpy.random as rand
+import sqlalchemy
+import sqlalchemy.orm as orm
+import psycopg2
 
 from dataman.audio_processing import *
 
@@ -115,3 +118,21 @@ class TestCollectKeystrokeData:
                                              ignore=ignore)
         num_ignore = sum([len([v for v in ignore[key]]) for key in ignore])
         assert len(no_ignore) - len(with_ignore) == num_ignore
+
+
+class TestDatabaseOperations:
+    def test_connect_to_database(self):
+        engine = connect_to_database()
+        assert type(engine) == sqlalchemy.engine.base.Engine
+
+    def test_create_keystroke_table(self):
+        engine = connect_to_database()
+        Session = orm.sessionmaker(bind=engine)
+        session = Session()
+        with pytest.raises(psycopg2.errors.UndefinedTable):
+            session.query(KeystrokeTest)
+        create_keystroke_table()
+        query = session.query(KeystrokeTest)
+        assert type(query) == sqlalchemy.orm.query.Query
+
+        

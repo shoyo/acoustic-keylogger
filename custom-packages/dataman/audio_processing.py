@@ -23,7 +23,7 @@ def wav_read(filepath):
     """Return 1D NumPy array of wave-formatted audio data denoted by filename.
 
     Input should be a string containing the path to a wave-formatted audio file.
-    File should be uncompressed 16-bit."""
+    """
     sample_rate, data_2d = wav.read(filepath)
     data_1d = [val for val, _ in data_2d]
     return np.array(data_1d)
@@ -33,6 +33,7 @@ def wav_read(filepath):
 
 def silence_threshold(sound_data, n=5, factor=11):
     """Return the silence threshold of the sound data.
+
     The sound data should begin with n-seconds of silence.
     """
     sampling_rate = 44100
@@ -46,7 +47,7 @@ def silence_threshold(sound_data, n=5, factor=11):
 
 
 def remove_random_noise(sound_data, threshold=None):
-    """Return a copy of sound_data where random noise is replaced with 0s.
+    """Return a copy of sound_data where random noise is replaced with 0's.
 
     The original sound_data is not mutated.
     """
@@ -196,8 +197,18 @@ class Keystroke(Base):
         return f'<Keystroke(key={self.key_type}, digest={self.sound_digest})>'
 
 
+class KeystrokeTest(Base):
+    """Schema for testing."""
+    __tablename__ = 'SampleKeystroke'
+
+    id = db.Column(db.BigInteger, primary_key=True)
+    key_type = db.Column(db.String(32), nullable=False)
+    sound_digest = db.Column(db.BigInteger, nullable=False, unique=True)
+    sound_data = db.Column(postgresql.ARRAY(db.Integer))
+
+
 def connect_to_database(url=os.environ['TEST_DATABASE_URL']):
-    """Connect to database and return engine, connection, metadata."""
+    """Connect to database and return corresponding engine instance."""
     engine = db.create_engine(url)
     connection = engine.connect()
     return engine
@@ -216,7 +227,7 @@ def drop_keystroke_table():
 
 
 def store_keystroke_data(collected_data, database_url):
-    """Store collected data in database and return result proxy.
+    """Store collected data in database.
 
     input format  -- output of collect_keystroke_data()
     """

@@ -144,7 +144,6 @@ class TestDatabaseOperations:
         session = Session()
         query = session.query(KeystrokeTest).all()
         session.close()
-        assert type(query) == sqlalchemy.orm.query.Query
         assert query == []
 
     def test_drop_keystroke_table(self):
@@ -157,7 +156,8 @@ class TestDatabaseOperations:
 
         # Assert that table is dropped by making a query
         session = Session()
-        with pytest.raises(sqlalchemy.exc.InternalError):
+        with pytest.raises((sqlalchemy.exc.ProgrammingError,
+                            sqlalchemy.exc.InternalError)):
             session.query(KeystrokeTest).all()
         session.close()
 

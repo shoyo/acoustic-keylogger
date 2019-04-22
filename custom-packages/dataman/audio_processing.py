@@ -325,17 +325,3 @@ def load_keystroke_data_for_binary_classifier(classify={'space'}):
         data.append(row.sound_data)
 
     return np.array(data), np.array(labels)
-
-
-# Data preprocessing (before training)
-
-def scale_keystroke_data(data):
-    """Scale each value in data to an appropriate value between 0 and 1.
-
-    input format -- NumPy array of Numpy arrays
-    """
-    data_copy = deepcopy(data.astype(float))
-    for i in range(len(data_copy)):
-        max_val, min_val = max(data_copy[i]), min(data_copy[i])
-        data_copy[i] = (data_copy[i] - min_val) / (max_val - min_val)
-    return data_copy

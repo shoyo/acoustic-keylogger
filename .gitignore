@@ -4,6 +4,7 @@ datasets/*
 !datasets/extraction-tests
 !datasets/collection-tests
 !datasets/database-tests
+!datasets/keystrokes
 
 # Ignore database (for now)
 db/

@@ -8,20 +8,9 @@ jobs:
       - checkout
       - run: docker-compose build
       - run: docker-compose up -d
-
-      # - restore_cache:
-      #     keys:
-      #       - v1-dependencies-{{ checksum "requirements.txt" }}
-      #       - v1-dependencies-
-
-      # - save_cache:
-      #     paths:
-      #       - ./venv
-      #     key: v1-dependecies-{{ checksum "requirements.txt" }}
-
       - run:
           name: run tests
-          command: docker-compose run env pytest -q tests
+          command: docker-compose -f docker-compose.test.yml run env pytest -q tests
 
       - store_artifacts:
           path: tests/reports

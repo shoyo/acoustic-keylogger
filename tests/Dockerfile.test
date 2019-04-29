@@ -1,5 +1,5 @@
 FROM python:3.6.8
 WORKDIR /env
-COPY tests/requirements-test.txt /env/requirements.txt
+COPY ./requirements.txt /env/requirements.txt
 RUN pip install -r requirements.txt
-COPY . /env
+COPY .. /env

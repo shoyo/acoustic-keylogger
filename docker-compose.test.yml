@@ -7,8 +7,9 @@ services:
       - ./db:/var/lib/postgresql/data
 
   env:
-    build: .
-    dockerfile: ./tests/Dockerfile.test
+    build:
+      context: .
+      dockerfile: ./tests/Dockerfile.test
     volumes:
       - .:/env
     ports:

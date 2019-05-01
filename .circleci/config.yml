@@ -6,10 +6,6 @@ jobs:
 
     steps:
       - checkout
-      - run:
-          name: "Set environment variables"
-          command: |
-            export CODECOV_TOKEN="db9695fa-309b-40ab-b1da-e4a0ab89c67e"
       - run: docker-compose -f docker-compose.test.yml build
       - run: docker-compose -f docker-compose.test.yml up -d
       - run:

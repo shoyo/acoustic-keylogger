@@ -109,6 +109,18 @@ def extract_keystrokes(sound_data, sample_rate=44100):
     return np.array(keystrokes)
 
 
+def extract_keystrokes_mfcc(sound_data, sample_rate=44100):
+    """Return slices of sound_data that denote each keystroke present.
+    
+    Objective:
+    - Should provide similar functionality to above 'extract_keystrokes()'
+    - Create a more accurate and flexible keystroke extraction function
+      utilizing more advanced audio processing techniques
+    - Calculate MFCC etc. of sound_data to detect relevant peaks in sound
+    """
+    pass
+
+
 # Display extracted keystrokes (WAV file -> all keystroke graphs)
 
 def visualize_keystrokes(filepath):
@@ -298,12 +310,13 @@ def load_keystroke_data(url=os.environ['TEST_DATABASE_URL']):
         'x': 23, 'y': 24, 'z': 25, 'space': 26, 'period': 27, 'enter': 28,
     }
 
-    data, labels = [], []
-    for row in keystrokes:
-        data.append(row.sound_data)
-        labels.append(keytype_id[row.key_type])
-
-    return np.array(data), np.array(labels)
+    n = len(keystrokes)
+    data, labels_num, labels_char = np.empty(n), np.empty(n), np.empty(n)
+    for i in range(n):
+        data[i] = keystrokes[i].sound_data
+        labels_num[i] = keytype_id[keystrokes[i].key_type]
+        labels_char[i] = keystrokes[i].key_type
+    return data, labels_num, labels_char
 
 
 def load_keystroke_data_for_binary_classifier(classify={'space'}):

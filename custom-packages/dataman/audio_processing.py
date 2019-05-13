@@ -109,6 +109,18 @@ def extract_keystrokes(sound_data, sample_rate=44100):
     return np.array(keystrokes)
 
 
+def extract_keystrokes_mfcc(sound_data, sample_rate=44100):
+    """Return slices of sound_data that denote each keystroke present.
+    
+    Objective:
+    - Should provide similar functionality to above 'extract_keystrokes()'
+    - Create a more accurate and flexible keystroke extraction function
+      utilizing more advanced audio processing techniques
+    - Calculate MFCC etc. of sound_data to detect relevant peaks in sound
+    """
+    pass
+
+
 # Display extracted keystrokes (WAV file -> all keystroke graphs)
 
 def visualize_keystrokes(filepath):
@@ -278,10 +290,13 @@ def store_keystroke_test_data(data, url):
 def load_keystroke_data(url=os.environ['TEST_DATABASE_URL']):
     """Retrieve data from database, do relevant formatting, and return it.
 
-    Return as a tuple of tuples of the form: (x, y)
-    where x denotes training data and y denotes labels.
+    Return as a tuple of the form: (x, y, z) where
+    x denotes array of each sound data,
+    y denotes array of integer labels (key 'a' denoted by '0', etc.),
+    z denotes array of string labels (key 'a' denoted by 'a', etc.)
 
-    This data will be passed to tf.keras.model.fit().
+    Particularly, tuple (x, y) is formatted so that it can be passed to
+    tf.keras.model.fit().
     For details, view documentation at: https://keras.io/models/model/#fit
     """
     engine = connect_to_database(url)
@@ -290,20 +305,19 @@ def load_keystroke_data(url=os.environ['TEST_DATABASE_URL']):
     keystrokes = session.query(Keystroke).all()
     session.close()
 
-    # np.random.shuffle(keystrokes)
-
-    keytype_id = {'a': 0, 'b': 1, 'c': 2, 'd': 3, 'e': 4, 'f': 5, 'g': 6,
-        'h': 7, 'i': 8, 'j': 9, 'k': 10, 'l': 11, 'm': 12, 'n': 13, 'o': 14,
-        'p': 15, 'q': 16, 'r': 17, 's': 18, 't': 19, 'u': 20, 'v': 21, 'w': 22,
-        'x': 23, 'y': 24, 'z': 25, 'space': 26, 'period': 27, 'enter': 28,
-    }
-
-    data, labels = [], []
-    for row in keystrokes:
-        data.append(row.sound_data)
-        labels.append(keytype_id[row.key_type])
-
-    return np.array(data), np.array(labels)
+    if keystrokes:
+        keytype_id = {'a': 0, 'b': 1, 'c': 2, 'd': 3, 'e': 4, 'f': 5, 'g': 6,
+            'h': 7, 'i': 8, 'j': 9, 'k': 10, 'l': 11, 'm': 12, 'n': 13, 'o': 14,
+            'p': 15, 'q': 16, 'r': 17, 's': 18, 't': 19, 'u': 20, 'v': 21, 'w': 22,
+            'x': 23, 'y': 24, 'z': 25, 'space': 26, 'period': 27, 'enter': 28,
+        }
+        n = len(keystrokes)
+        data, labels_int, labels_str = [], [], []
+        for row in keystrokes:
+            data.append(row.sound_data)
+            labels_int.append(keytype_id[row.key_type])
+            labels_str.append(row.key_type)
+        return np.array(data), np.array(labels_int), np.array(labels_str)
 
 
 def load_keystroke_data_for_binary_classifier(classify={'space'}):

@@ -1,7 +1,5 @@
 #  Keyboard Acoustic Emanations Attack (Research)
 
-![alt text](https://github.com/shoyo-inokuchi/acoustic-keylogger-research/blob/master/lab/figs/tsne-success.png)
-
 ## Objectives
   * Create a proof-of-concept for a keyboard acoustic emanations attack, and
     evaluate its __accuracy__, __effectiveness__, and __accessibility__.
@@ -22,6 +20,8 @@ therefore aims to identify how __accurate__, __effective__, and __accessible__
 such a security attack is in the current machine learning landscape. (If an undergraduate
 student researcher like myself can create a relatively effective prototype, this would likely be a
 sign for a considerable security concern.)
+
+![alt text](https://github.com/shoyo-inokuchi/acoustic-keylogger-research/blob/master/lab/figs/tsne-success.png)
 
 ## Setting up
 ### Option 1 - Docker

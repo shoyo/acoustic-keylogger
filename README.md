@@ -1,5 +1,7 @@
 #  Keyboard Acoustic Emanations Attack (Research)
 
+![alt text](https://github.com/shoyo-inokuchi/iterated-prisoners-dilemma/blob/master/lab/figs/tsne-success.png)
+
 ## Objectives
   * Create a proof-of-concept for a keyboard acoustic emanations attack, and
     evaluate its __accuracy__, __effectiveness__, and __accessibility__.

@@ -10,7 +10,7 @@ import sqlalchemy
 import sqlalchemy.orm as orm
 import psycopg2
 
-from dataman.audio_processing import *
+from acoustic_keylogger import *
 
 
 def test_wav_read():
@@ -55,7 +55,7 @@ def test_remove_random_noise():
         assert input[i] == original[i]
 
 
-class TestExtractKeystrokes:
+class TestDetectKeystrokes:
     def test_slowly_typed_phrases(self):
         phrases = {
             'hello_there',
@@ -63,9 +63,9 @@ class TestExtractKeystrokes:
             'this_is_not_a_password',
         }
         for phrase in phrases:
-            filepath = 'datasets/extraction-tests/' + phrase + '.wav'
+            filepath = 'datasets/detection-tests/' + phrase + '.wav'
             input = wav_read(filepath)
-            output = extract_keystrokes(input)
+            output = detect_keystrokes(input)
             assert len(output) == len(phrase)
 
     def test_more_rapidly_typed_phrases(self):
@@ -75,13 +75,38 @@ class TestExtractKeystrokes:
             'how_many_keystrokes_was_that_',
         }
         for phrase in phrases:
-            filepath = 'datasets/extraction-tests/' + phrase + '.wav'
+            filepath = 'datasets/detection-tests/' + phrase + '.wav'
             input = wav_read(filepath)
-            output = extract_keystrokes(input)
+            output = detect_keystrokes(input)
             assert len(output) != len(phrase)
 
-    def test_no_overlap(self):
-        pass
+    # ---------------------------------------------------------------- #
+
+    def test_slowly_typed_phrases2(self):
+        """Run test again but with detect_keystrokes_improved()."""
+        phrases = {
+            'hello_there',
+            'jungle_cruise_',
+            'this_is_not_a_password',
+        }
+        for phrase in phrases:
+            filepath = 'datasets/detection-tests/' + phrase + '.wav'
+            input = wav_read(filepath)
+            output = detect_keystrokes_improved(input)
+            assert len(output) == len(phrase)
+
+    def test_more_rapidly_typed_phrases2(self):
+        """Run test again but with detect_keystrokes_improved()."""
+        phrases = {
+            'of_course_i_still_love_you_',
+            'we_move_fast',
+            'how_many_keystrokes_was_that_',
+        }
+        for phrase in phrases:
+            filepath = 'datasets/detection-tests/' + phrase + '.wav'
+            input = wav_read(filepath)
+            output = detect_keystrokes_improved(input)
+            assert len(output) != len(phrase)
 
 
 class TestCollectKeystrokeData:

@@ -24,35 +24,35 @@ def test_wav_read():
 class TestSilenceThreshold:
     def test_not_enough_silence(self):
         """Raise exception when a sound contains no initial silence."""
-        data = wav_read('datasets/samples/no-initial-silence.wav')
+        signal = wav_read('datasets/samples/no-initial-silence.wav')
         with pytest.raises(Exception):
-            silence_threshold(data)
+            silence_threshold(signal)
 
     def test_threshold_1(self):
         initial_silence = [0 for _ in range(44100 * 5)]
         random_noise = [rand.randint(-1000, 1001) for _ in range(100)]
-        data = np.array(initial_silence + random_noise)
-        assert silence_threshold(data, factor=1) == 0
+        signal = np.array(initial_silence + random_noise)
+        assert silence_threshold(signal, factor=1) == 0
 
 
     def test_threshold_2(self):
         initial_silence = [rand.randint(-20, 21) for _ in range(44100*5 - 1)]
         initial_silence.append(25)
         random_noise = [rand.randint(-1000, 1001) for _ in range(100)]
-        data = np.array(initial_silence + random_noise)
-        assert silence_threshold(data, factor=1) == 25
+        signal = np.array(initial_silence + random_noise)
+        assert silence_threshold(signal, factor=1) == 25
 
 
 def test_remove_random_noise():
-    """Assert noise is removed in output and data is not mutated."""
+    """Assert noise is removed in output and signal is not mutated."""
     original = [2, 12, 4, -23, -4, 2, 0, 34]
     expected = [0, 12, 0, -23, 0, 0, 0, 34]
     threshold = 5
-    data = np.array(original)
-    output = remove_random_noise(data, threshold)
+    signal = np.array(original)
+    output = remove_random_noise(signal, threshold)
     for i in range(len(output)):
         assert output[i] == expected[i]
-        assert data[i] == original[i]
+        assert signal[i] == original[i]
 
 
 class TestDetectKeystrokes:
@@ -64,8 +64,8 @@ class TestDetectKeystrokes:
         }
         for phrase in phrases:
             filepath = 'datasets/detection-tests/' + phrase + '.wav'
-            data = wav_read(filepath)
-            output = detect_keystrokes(data)
+            signal = wav_read(filepath)
+            output = detect_keystrokes(signal)
             assert len(output) == len(phrase)
 
     def test_more_rapidly_typed_phrases(self):
@@ -76,8 +76,8 @@ class TestDetectKeystrokes:
         }
         for phrase in phrases:
             filepath = 'datasets/detection-tests/' + phrase + '.wav'
-            data = wav_read(filepath)
-            output = detect_keystrokes(data)
+            signal = wav_read(filepath)
+            output = detect_keystrokes(signal)
             assert len(output) != len(phrase)
 
     # ---------------------------------------------------------------- #
@@ -91,8 +91,8 @@ class TestDetectKeystrokes:
         }
         for phrase in phrases:
             filepath = 'datasets/detection-tests/' + phrase + '.wav'
-            data = wav_read(filepath)
-            output = detect_keystrokes_improved(data)
+            signal = wav_read(filepath)
+            output = detect_keystrokes_improved(signal)
             assert len(output) == len(phrase)
 
     def test_more_rapidly_typed_phrases2(self):
@@ -104,8 +104,8 @@ class TestDetectKeystrokes:
         }
         for phrase in phrases:
             filepath = 'datasets/detection-tests/' + phrase + '.wav'
-            data = wav_read(filepath)
-            output = detect_keystrokes_improved(data)
+            signal = wav_read(filepath)
+            output = detect_keystrokes_improved(signal)
             assert len(output) != len(phrase)
 
 

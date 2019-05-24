@@ -6,12 +6,14 @@ datasets/*
 !datasets/database-tests
 !datasets/keystrokes
 
+# Ignore typist ids
+datasets/keystrokes/typist_ids.txt
+
 # Ignore database (for now)
 db/
 
 # Ignore cache
-__pycache__
-*/__pycache__
+__pycache__/
 .pytest_cache
 .ipynb_checkpoints
 

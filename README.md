@@ -3,13 +3,26 @@
 ## Overview
 A *keyboard acoustic emanations attack* is a form of a [side-channel
 attack](https://en.wikipedia.org/wiki/Side-channel_attack) where an attacker
-extracts what a victim typed on his or her keyboard using just the audio signal of the typing. Such a keylogging attack can result in passwords and confidential information being stolen from just a compromised microphone, and thus has severe security implications. I believe that many of the concepts that have become de facto in fields such as voice recognition and natural language processing can translate over to an implementation of an audio-based keylogging attack. With the advent of several open-sourced machine learning libraries in the past decade, I believe that such an attack is becoming increasingly accessible to implement, and should therefore receive more awareness from the general public.
+extracts what a victim typed on his or her keyboard using just the audio signal
+of the typing. Such a keylogging attack can result in passwords and
+confidential information being stolen from just a compromised microphone, and
+thus has severe security implications. I believe that many of the concepts that
+have become de facto in fields such as voice recognition and natural language
+processing can translate over to an implementation of an audio-based keylogging
+attack. With the advent of several open-sourced machine learning libraries in
+the past decade, I believe that such an attack is becoming increasingly
+accessible to implement, and should therefore receive more awareness from the
+general public.
 
 ### Objective
-Evaluate the threat of a *keyboard acoustic emanations attack* in the current machine learning landscape by creating a proof-of-concept pipeline for executing such an attack and measuring its __accuracy__, __practicality__, and __accessibility__.
+Evaluate the threat of a *keyboard acoustic emanations attack* in the current
+machine learning landscape by creating a proof-of-concept pipeline for
+executing such an attack and measuring its __accuracy__, __practicality__, and
+__accessibility__.
 * __Accuracy__: How well does the pipeline approximate typed keys?
 * __Practicality__: How robust is the pipeline under realistic conditions?
-* __Accessibility__: How easily can the pipeline be built? (with regards to prerequisite knowledge and used technology)
+* __Accessibility__: How easily can the pipeline be built? (with regards to
+  prerequisite knowledge and used technology)
 
 ### Current Progress
 An essential component of the pipeline is the ability to distinguish the
@@ -28,31 +41,37 @@ with Cherry MX Brown switches*
 ## Setting up
 ### Option 1 - Docker
 This project uses a Python 3.6 development environment and a PostgreSQL database
-to manage various audio data. This option conveniently spins up these environments with Docker Compose.  
-* Install Docker. (https://www.docker.com/products/docker-desktop)  
-* Build images with `$ docker-compose build`. This is only required the first time or whenever Docker settings are
-  changed.
+to manage various audio data. This option conveniently spins up these
+environments with Docker Compose.  
 
-This step will install all dependencies for env (such as Jupyter, Tensorflow, NumPy etc.)
-and mount your local file system with the file system within the "env" Docker container.
+* Install Docker. (https://www.docker.com/products/docker-desktop)  
+* Build images with `$ docker-compose build`. This is only required the first
+time or whenever Docker settings are changed.
+
+This step will install all dependencies for env (such as Jupyter, Tensorflow,
+NumPy etc.) and mount your local file system with the file system within the
+"env" Docker container.
 
 * Spin up the database and development environment with `$ docker-compose up`.
 
-This should open up the database for connections and make __http://localhost:8888__ access
-the Jupyter notebook.
+This should open up the database for connections and allow __http://
+localhost:8888__ to access the Jupyter notebook.
 
 ### Option 2 - No Docker
-In exchange for containerization and seamless setup, Docker requires more overhead memory and
-comes with little quirks in the development environment with the current setup (like having to manually open the Jupyter
-notebook). I find that a lot of times using Docker for small tweaks is a bit overkill, so I'm leaving this
-option here.
+In exchange for containerization and seamless setup, Docker requires more
+overhead memory and comes with little quirks in the development environment
+with the current setup (like having to manually open the Jupyter
+notebook). I find that a lot of times using Docker for small tweaks is a bit
+overkill, so I'm leaving this option here.
 
-* Install Python version 3.6. To downgrade from Python 3.7+ without overriding your current version,
-  I recommend installing conda (https://www.anaconda.com/distribution/) and running
+* Install Python version 3.6. To downgrade from Python 3.7+ without overriding
+your current version, I recommend installing conda (https://www.anaconda.com/
+distribution/) and running
 
         $ conda install python=3.6.8
 
-* Set up a virtual environment. I recommend virtualenvwrapper for managing multiple environments.   
+* Set up a virtual environment. I recommend virtualenvwrapper for managing
+multiple environments.   
 
 * Install dependencies with
 
@@ -66,16 +85,17 @@ option here.
 
         $ export TEST_DATABASE_URL=postgresql+psycopg2://postgres@acoustic-keylogger-research_db_1:5432
 
-  I recommend adding these command to your `~/.bash_profile` or `~/.bashrc` so that it gets loaded between terminal sessions.
+  I recommend adding these command to your `~/.bash_profile` or `~/.bashrc` so
+  that it gets loaded between terminal sessions.
 
 * Open Jupyter notebook with
 
         $ jupyter notebook
 
 
-This option can be simpler if you're unfamiliar with Docker or you don't need to access the database.
-(Though the latter should still be possible using local postgres commands)
-
+This option can be simpler if you're unfamiliar with Docker or you don't need
+to access the database. (Though the latter should still be possible using local
+  postgres commands)
 
 
 ## Testing [![CircleCI](https://circleci.com/gh/shoyo-inokuchi/acoustic-keylogger-research/tree/master.svg?style=svg)](https://circleci.com/gh/shoyo-inokuchi/acoustic-keylogger-research/tree/master)
@@ -92,7 +112,8 @@ To run tests with no Docker configuration (Option 2), execute:
 
     $ python3.6 -m pytest -q tests
 
-__Note:__ Both of the commands above are assumed to be executed from the root directory of this repository.
+__Note:__ Both of the commands above are assumed to be executed from the root
+directory of this repository.
 
 
 ## The Pipeline
@@ -118,9 +139,7 @@ which key type
 * __Iterative Pseudo-labeled Supervised Training__ - Training a classifier
 using the predicted labels and iterating
 
-This pipeline is modeled after the research described in [*Keyboard Acoustic
-Emanations Revisited* by L. Zhuang, F. Zhou, J. D. Tygar in 2005](https://
-www.cs.cornell.edu/~shmat/courses/cs6431/zhuang.pdf).
+This pipeline is modeled after the research described in [*Keyboard Acoustic Emanations Revisited* by L. Zhuang, F. Zhou, J. D. Tygar in 2005](https://www.cs.cornell.edu/~shmat/courses/cs6431/zhuang.pdf).
 
 
 ## Relevant Research Papers

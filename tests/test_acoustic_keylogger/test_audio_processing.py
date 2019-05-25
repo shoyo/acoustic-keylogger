@@ -10,7 +10,7 @@ import sqlalchemy
 import sqlalchemy.orm as orm
 import psycopg2
 
-from acoustic_keylogger import *
+from acoustic_keylogger.audio_processing import *
 
 
 def test_wav_read():
@@ -68,6 +68,7 @@ class TestDetectKeystrokes:
             output = detect_keystrokes(signal)
             assert len(output) == len(phrase)
 
+    @pytest.mark.skip(reason="Current detection algorithm can't handle rapid typing")
     def test_more_rapidly_typed_phrases(self):
         phrases = {
             'of_course_i_still_love_you_',
@@ -78,7 +79,7 @@ class TestDetectKeystrokes:
             filepath = 'datasets/detection-tests/' + phrase + '.wav'
             signal = wav_read(filepath)
             output = detect_keystrokes(signal)
-            assert len(output) != len(phrase)
+            assert len(output) == len(phrase)
 
     # ---------------------------------------------------------------- #
 

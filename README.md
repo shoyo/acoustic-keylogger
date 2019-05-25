@@ -6,7 +6,7 @@ attack](https://en.wikipedia.org/wiki/Side-channel_attack) where an attacker
 extracts what a victim typed on his or her keyboard using just the audio signal
 of the typing. Such a keylogging attack can result in passwords and
 confidential information being stolen from just a compromised microphone, and
-thus has severe security implications. I believe that many of the concepts that
+thus has severe security implications. I believe that many of the techniques that
 have become de facto in fields such as voice recognition and natural language
 processing can translate over to an implementation of an audio-based keylogging
 attack. With the advent of several open-sourced machine learning libraries in

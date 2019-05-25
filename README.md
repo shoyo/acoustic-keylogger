@@ -54,15 +54,14 @@ NumPy etc.) and mount your local file system with the file system within the
 
 * Spin up the database and development environment with `$ docker-compose up`.
 
-This should open up the database for connections and allow __http://
-localhost:8888__ to access the Jupyter notebook.
+This should open up the database for connections and connect __http://localhost:8888__ to the Jupyter notebook.
 
 ### Option 2 - No Docker
 In exchange for containerization and seamless setup, Docker requires more
 overhead memory and comes with little quirks in the development environment
-with the current setup (like having to manually open the Jupyter
-notebook). I find that a lot of times using Docker for small tweaks is a bit
-overkill, so I'm leaving this option here.
+with the current setup (like having to manually open the Jupyter notebook). I
+find that a lot of times using Docker for small tweaks is a bit overkill, so
+I'm leaving this option here.
 
 * Install Python version 3.6. To downgrade from Python 3.7+ without overriding
 your current version, I recommend installing conda (https://www.anaconda.com/

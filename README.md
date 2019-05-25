@@ -21,6 +21,8 @@ such a security attack is in the current machine learning landscape. (If an unde
 student researcher like myself can create a relatively effective prototype, this would likely be a
 sign for a considerable security concern.)
 
+![alt text](https://github.com/shoyo-inokuchi/acoustic-keylogger-research/blob/master/lab/figs/tsne-success.png)
+
 ## Setting up
 ### Option 1 - Docker
 This project uses a Python 3.6 development environment and a PostgreSQL database

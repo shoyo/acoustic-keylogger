@@ -84,6 +84,7 @@ class TestDetectKeystrokes:
 
     # ---------------------------------------------------------------- #
 
+    @pytest.mark.skip(reason='Revised keystroke detection algorithm not yet implemented')
     def test_slowly_typed_phrases2(self):
         """Run test again but with detect_keystrokes_improved()."""
         phrases = {
@@ -97,6 +98,7 @@ class TestDetectKeystrokes:
             output = detect_keystrokes_improved(signal)
             assert len(output) == len(phrase)
 
+    @pytest.mark.skip(reason='Revised keystroke detection algorithm not yet implemented')
     def test_more_rapidly_typed_phrases2(self):
         """Run test again but with detect_keystrokes_improved()."""
         phrases = {

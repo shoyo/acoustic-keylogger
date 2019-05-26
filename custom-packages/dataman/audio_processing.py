@@ -40,10 +40,12 @@ def silence_threshold(sound_data, n=5, factor=11):
     num_samples   = sampling_rate * n
     silence       = sound_data[:num_samples]
     tolerance     = 40
-    if np.std(silence) > tolerance:
-        raise Exception(f'Sound data must begin with at least {n}s of silence.')
-    else:
-        return max(np.amax(silence), abs(np.amin(silence))) * factor
+    measured      = np.std(silence)
+    if measured > tolerance:
+        # raise Exception(f'Sound data must begin with at least {n}s of silence.')
+        print(f'Initial silence was higher than expected at {measured}, which',
+              f' is higher than expected {tolerance}')
+    return max(np.amax(silence), abs(np.amin(silence))) * factor
 
 
 def remove_random_noise(sound_data, threshold=None):

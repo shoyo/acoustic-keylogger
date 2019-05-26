@@ -10,7 +10,7 @@ import sqlalchemy
 import sqlalchemy.orm as orm
 import psycopg2
 
-from dataman.audio_processing import *
+from acoustic_keylogger.audio_processing import *
 
 
 def test_wav_read():
@@ -25,38 +25,38 @@ class TestSilenceThreshold:
     @pytest.mark.skip(reason='Not enough silence no longer raises error')
     def test_not_enough_silence(self):
         """Raise exception when a sound contains no initial silence."""
-        input = wav_read('datasets/samples/no-initial-silence.wav')
+        signal = wav_read('datasets/samples/no-initial-silence.wav')
         with pytest.raises(Exception):
-            silence_threshold(input)
+            silence_threshold(signal)
 
     def test_threshold_1(self):
         initial_silence = [0 for _ in range(44100 * 5)]
         random_noise = [rand.randint(-1000, 1001) for _ in range(100)]
-        input = np.array(initial_silence + random_noise)
-        assert silence_threshold(input, factor=1) == 0
+        signal = np.array(initial_silence + random_noise)
+        assert silence_threshold(signal, factor=1) == 0
 
 
     def test_threshold_2(self):
         initial_silence = [rand.randint(-20, 21) for _ in range(44100*5 - 1)]
         initial_silence.append(25)
         random_noise = [rand.randint(-1000, 1001) for _ in range(100)]
-        input = np.array(initial_silence + random_noise)
-        assert silence_threshold(input, factor=1) == 25
+        signal = np.array(initial_silence + random_noise)
+        assert silence_threshold(signal, factor=1) == 25
 
 
 def test_remove_random_noise():
-    """Assert noise is removed in output and input is not mutated."""
+    """Assert noise is removed in output and signal is not mutated."""
     original = [2, 12, 4, -23, -4, 2, 0, 34]
     expected = [0, 12, 0, -23, 0, 0, 0, 34]
     threshold = 5
-    input = np.array(original)
-    output = remove_random_noise(input, threshold)
+    signal = np.array(original)
+    output = remove_random_noise(signal, threshold)
     for i in range(len(output)):
         assert output[i] == expected[i]
-        assert input[i] == original[i]
+        assert signal[i] == original[i]
 
 
-class TestExtractKeystrokes:
+class TestDetectKeystrokes:
     def test_slowly_typed_phrases(self):
         phrases = {
             'hello_there',
@@ -64,11 +64,12 @@ class TestExtractKeystrokes:
             'this_is_not_a_password',
         }
         for phrase in phrases:
-            filepath = 'datasets/extraction-tests/' + phrase + '.wav'
-            input = wav_read(filepath)
-            output = extract_keystrokes(input)
+            filepath = 'datasets/detection-tests/' + phrase + '.wav'
+            signal = wav_read(filepath)
+            output = detect_keystrokes(signal)
             assert len(output) == len(phrase)
 
+    @pytest.mark.skip(reason="Current detection algorithm can't handle rapid typing")
     def test_more_rapidly_typed_phrases(self):
         phrases = {
             'of_course_i_still_love_you_',
@@ -76,13 +77,38 @@ class TestExtractKeystrokes:
             'how_many_keystrokes_was_that_',
         }
         for phrase in phrases:
-            filepath = 'datasets/extraction-tests/' + phrase + '.wav'
-            input = wav_read(filepath)
-            output = extract_keystrokes(input)
-            assert len(output) != len(phrase)
+            filepath = 'datasets/detection-tests/' + phrase + '.wav'
+            signal = wav_read(filepath)
+            output = detect_keystrokes(signal)
+            assert len(output) == len(phrase)
 
-    def test_no_overlap(self):
-        pass
+    # ---------------------------------------------------------------- #
+
+    def test_slowly_typed_phrases2(self):
+        """Run test again but with detect_keystrokes_improved()."""
+        phrases = {
+            'hello_there',
+            'jungle_cruise_',
+            'this_is_not_a_password',
+        }
+        for phrase in phrases:
+            filepath = 'datasets/detection-tests/' + phrase + '.wav'
+            signal = wav_read(filepath)
+            output = detect_keystrokes_improved(signal)
+            assert len(output) == len(phrase)
+
+    def test_more_rapidly_typed_phrases2(self):
+        """Run test again but with detect_keystrokes_improved()."""
+        phrases = {
+            'of_course_i_still_love_you_',
+            'we_move_fast',
+            'how_many_keystrokes_was_that_',
+        }
+        for phrase in phrases:
+            filepath = 'datasets/detection-tests/' + phrase + '.wav'
+            signal = wav_read(filepath)
+            output = detect_keystrokes_improved(signal)
+            assert len(output) != len(phrase)
 
 
 class TestCollectKeystrokeData:

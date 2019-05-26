@@ -1,7 +1,7 @@
 # Ignore most datasets
 datasets/*
 !datasets/samples
-!datasets/extraction-tests
+!datasets/detection-tests
 !datasets/collection-tests
 !datasets/database-tests
 !datasets/keystrokes

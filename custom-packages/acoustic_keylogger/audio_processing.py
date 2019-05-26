@@ -25,11 +25,10 @@ def wav_read(filepath):
     Input should be a string containing the path to a wave-formatted audio file.
     """
     sample_rate, data_2d = wav.read(filepath)
-    data_1d = [val for val, _ in data_2d]
-    return np.array(data_1d)
+    return data_2d[:, 0]
 
 
-# Sound preprocessing before keystroke extraction
+# Sound preprocessing before keystroke detection
 
 def silence_threshold(sound_data, n=5, factor=11):
     """Return the silence threshold of the sound data.
@@ -61,9 +60,9 @@ def remove_random_noise(sound_data, threshold=None):
     return sound_data_copy
 
 
-# Keystroke extraction (single sound data -> all keystroke data in data)
+# Keystroke detection (single sound data -> all keystroke data in data)
 
-def extract_keystrokes(sound_data, sample_rate=44100):
+def detect_keystrokes(sound_data, sample_rate=44100):
     """Return slices of sound_data that denote each keystroke present.
 
     Returned keystrokes are coerced to be the same length by appending trailing
@@ -111,24 +110,24 @@ def extract_keystrokes(sound_data, sample_rate=44100):
     return np.array(keystrokes)
 
 
-def extract_keystrokes_mfcc(sound_data, sample_rate=44100):
+def detect_keystrokes_improved(sound_data, sample_rate=44100):
     """Return slices of sound_data that denote each keystroke present.
     
     Objective:
-    - Should provide similar functionality to above 'extract_keystrokes()'
-    - Create a more accurate and flexible keystroke extraction function
+    - Satisfy same functional requirements as 'detect_keystrokes()', but better
+    - Create a more accurate and flexible keystroke detection function
       utilizing more advanced audio processing techniques
     - Calculate MFCC etc. of sound_data to detect relevant peaks in sound
     """
     pass
 
 
-# Display extracted keystrokes (WAV file -> all keystroke graphs)
+# Display detected keystrokes (WAV file -> all keystroke graphs)
 
 def visualize_keystrokes(filepath):
-    """Display each keystroke contained in WAV file specified by filepath."""
+    """Display each keystroke detected in WAV file specified by filepath."""
     wav_data = wav_read(filepath)
-    keystrokes = extract_keystrokes(wav_data)
+    keystrokes = detect_keystrokes(wav_data)
     n = len(keystrokes)
     print(f'Number of keystrokes detected in "{filepath}": {n}')
     print('Drawing keystrokes...')
@@ -152,8 +151,8 @@ def collect_keystroke_data(filepath_base='datasets/keystrokes/',
 
     Arguments:
     base_dir -- directory to search for audio files
-    keys     -- list of key types to extract (corresponds to file names)
-    output   -- True to display status messages during keystroke extraction
+    keys     -- list of key types to detect (corresponds to file names)
+    output   -- True to display status messages during keystroke detection
     ignore   -- dict of filenames mapped to indices of keystrokes to ignore
 
     input format  -- WAV files in subdirectories of "base_dir"
@@ -171,9 +170,9 @@ def collect_keystroke_data(filepath_base='datasets/keystrokes/',
         if output: print(f'> Reading files from {filepath} for key "{key}"')
         for file in os.listdir(filepath):
             if output:
-                print(f'  > Extracting keystrokes from "{file}"', end='')
+                print(f'  > Detecting keystrokes from "{file}"', end='')
             wav_data = wav_read(filepath + file)
-            keystrokes = extract_keystrokes(wav_data)
+            keystrokes = detect_keystrokes(wav_data)
             collected = 0
             for i in range(len(keystrokes)):
                 if ignore and file in ignore and i in ignore[file]:
@@ -292,10 +291,13 @@ def store_keystroke_test_data(data, url):
 def load_keystroke_data(url=os.environ['TEST_DATABASE_URL']):
     """Retrieve data from database, do relevant formatting, and return it.
 
-    Return as a tuple of the form: (x, y, z) where
-    x denotes array of each sound data,
-    y denotes array of integer labels (key 'a' denoted by '0', etc.),
-    z denotes array of string labels (key 'a' denoted by 'a', etc.)
+    Return a tuple of the form (x, y, z) where
+        x denotes an array of each sound data,
+        y denotes an array of integer labels (key 'a' denoted by 0, etc.),
+        z denotes an array of string labels (key 'a' denoted by 'a', etc.).
+
+        Furthermore, x, y, z are formatted such that for any index 'i',
+        x[i], y[i], z[i] correspond to the same keystroke.
 
     Particularly, tuple (x, y) is formatted so that it can be passed to
     tf.keras.model.fit().
@@ -313,7 +315,6 @@ def load_keystroke_data(url=os.environ['TEST_DATABASE_URL']):
             'p': 15, 'q': 16, 'r': 17, 's': 18, 't': 19, 'u': 20, 'v': 21, 'w': 22,
             'x': 23, 'y': 24, 'z': 25, 'space': 26, 'period': 27, 'enter': 28,
         }
-        n = len(keystrokes)
         data, labels_int, labels_str = [], [], []
         for row in keystrokes:
             data.append(row.sound_data)
@@ -321,23 +322,3 @@ def load_keystroke_data(url=os.environ['TEST_DATABASE_URL']):
             labels_str.append(row.key_type)
         return np.array(data), np.array(labels_int), np.array(labels_str)
 
-
-def load_keystroke_data_for_binary_classifier(classify={'space'}):
-    """Load data from database for a binary classifier."""
-    engine = connect_to_database()
-    Session = orm.sessionmaker(bind=engine)
-    session = Session()
-    keystrokes = session.query(Keystroke).all()
-    session.close()
-
-    np.random.shuffle(keystrokes)
-
-    data, labels = [], []
-    for row in keystrokes:
-        if row.key_type in classify:
-            labels.append(1)
-        else:
-            labels.append(0)
-        data.append(row.sound_data)
-
-    return np.array(data), np.array(labels)

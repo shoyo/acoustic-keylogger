@@ -38,6 +38,32 @@ more diverse dataset.
 with Cherry MX Brown switches*
 
 
+## The Pipeline
+This is the pipeline that is currently being implemented. Each component is
+modular, such that any component can be swapped out for an enhanced version of
+itself with minimal effort. This prevents this project from being monolithic
+and allows more incremental improvements to be made.
+
+* __Data Collection__ - Gathering a diverse dataset of typing sounds recorded
+under realistic conditions
+
+* __Keystroke Detection__ - Identifying all of the keystroke sounds in a given
+audio file
+
+* __Keystroke Feature Extraction__ - Preprocessing each keystroke sound for
+further analysis
+
+* __Clustering__ - Forming clusters with the preprocessed keystroke data
+
+* __Predictive Cluster Labeling__ - Identifying which clusters correspond to
+which key type
+
+* __Iterative Pseudo-labeled Supervised Training__ - Training a classifier
+using the predicted labels and iterating
+
+This pipeline is modeled after the research described in [*Keyboard Acoustic Emanations Revisited* by L. Zhuang, F. Zhou, J. D. Tygar in 2005](https://www.cs.cornell.edu/~shmat/courses/cs6431/zhuang.pdf).
+
+
 ## Setting up
 ### Option 1 - Docker
 This project uses a Python 3.6 development environment and a PostgreSQL database
@@ -113,32 +139,6 @@ To run tests with no Docker configuration (Option 2), execute:
 
 __Note:__ Both of the commands above are assumed to be executed from the root
 directory of this repository.
-
-
-## The Pipeline
-This is the pipeline that is currently being implemented. Each component is
-modular, such that any component can be swapped out for an enhanced version of
-itself with minimal effort. This prevents this project from being monolithic
-and allows more incremental improvements to be made.
-
-* __Data Collection__ - Gathering a diverse dataset of typing sounds recorded
-under realistic conditions
-
-* __Keystroke Detection__ - Identifying all of the keystroke sounds in a given
-audio file
-
-* __Keystroke Feature Extraction__ - Preprocessing each keystroke sound for
-further analysis
-
-* __Clustering__ - Forming clusters with the preprocessed keystroke data
-
-* __Predictive Cluster Labeling__ - Identifying which clusters correspond to
-which key type
-
-* __Iterative Pseudo-labeled Supervised Training__ - Training a classifier
-using the predicted labels and iterating
-
-This pipeline is modeled after the research described in [*Keyboard Acoustic Emanations Revisited* by L. Zhuang, F. Zhou, J. D. Tygar in 2005](https://www.cs.cornell.edu/~shmat/courses/cs6431/zhuang.pdf).
 
 
 ## Relevant Research Papers

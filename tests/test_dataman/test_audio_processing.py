@@ -22,7 +22,7 @@ def test_wav_read():
 
 
 class TestSilenceThreshold:
-    pytest.skip(reason='Not enough silence no longer raises error')
+    @pytest.mark.skip(reason='Not enough silence no longer raises error')
     def test_not_enough_silence(self):
         """Raise exception when a sound contains no initial silence."""
         input = wav_read('datasets/samples/no-initial-silence.wav')

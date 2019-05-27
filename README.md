@@ -70,7 +70,7 @@ This project uses a Python 3.6 development environment and a PostgreSQL database
 to manage various audio data. This option conveniently spins up these
 environments with Docker Compose.  
 
-* Install Docker. (https://www.docker.com/products/docker-desktop)  
+* Install [Docker](https://www.docker.com/products/docker-desktop).  
 * Build images with `$ docker-compose build`. This is only required the first
 time or whenever Docker settings are changed.
 
@@ -90,7 +90,7 @@ find that a lot of times using Docker for small tweaks is a bit overkill, so
 I'm leaving this option here.
 
 * Install Python version 3.6. To downgrade from Python 3.7+ without overriding
-your current version, I recommend installing conda (https://www.anaconda.com/distribution/)
+your current version, I recommend installing [conda](https://www.anaconda.com/distribution/)
 and running
 
         $ conda install python=3.6.8

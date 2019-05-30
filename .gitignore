@@ -1,3 +1,6 @@
+# Ignore lab
+lab/
+
 # Ignore most datasets
 datasets/*
 !datasets/samples

@@ -1,10 +1,12 @@
+# Ignore lab
+lab/
+
 # Ignore most datasets
 datasets/*
 !datasets/samples
 !datasets/detection-tests
 !datasets/collection-tests
 !datasets/database-tests
-!datasets/keystrokes
 !datasets/very-rapid
 
 # Ignore typist ids

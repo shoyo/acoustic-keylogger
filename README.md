@@ -70,7 +70,7 @@ This project uses a Python 3.6 development environment and a PostgreSQL database
 to manage various audio data. This option conveniently spins up these
 environments with Docker Compose.  
 
-* Install Docker. (https://www.docker.com/products/docker-desktop)  
+* Install [Docker](https://www.docker.com/products/docker-desktop).  
 * Build images with `$ docker-compose build`. This is only required the first
 time or whenever Docker settings are changed.
 
@@ -90,8 +90,8 @@ find that a lot of times using Docker for small tweaks is a bit overkill, so
 I'm leaving this option here.
 
 * Install Python version 3.6. To downgrade from Python 3.7+ without overriding
-your current version, I recommend installing conda (https://www.anaconda.com/
-distribution/) and running
+your current version, I recommend installing [conda](https://www.anaconda.com/distribution/)
+and running
 
         $ conda install python=3.6.8
 
@@ -110,7 +110,7 @@ multiple environments.
 
         $ export TEST_DATABASE_URL=postgresql+psycopg2://postgres@acoustic-keylogger-research_db_1:5432
 
-  I recommend adding these command to your `~/.bash_profile` or `~/.bashrc` so
+  I recommend adding these commands to your `~/.bash_profile` or `~/.bashrc` so
   that it gets loaded between terminal sessions.
 
 * Open Jupyter notebook with
@@ -120,7 +120,7 @@ multiple environments.
 
 This option can be simpler if you're unfamiliar with Docker or you don't need
 to access the database. (Though the latter should still be possible using local
-  postgres commands)
+postgres commands)
 
 
 ## Testing [![CircleCI](https://circleci.com/gh/shoyo-inokuchi/acoustic-keylogger-research/tree/master.svg?style=svg)](https://circleci.com/gh/shoyo-inokuchi/acoustic-keylogger-research/tree/master)
@@ -147,10 +147,7 @@ keyboard acoustic emanations attacks. Some research, such as [*Keyboard
 Acoustic Emanations Revisited* by L. Zhuang, F. Zhou, J. D. Tygar in
 2005](https://www.cs.cornell.edu/~shmat/courses/cs6431/zhuang.pdf),
 demonstrated extremely accurate results (96% chars recovered from 10 minute
-sound recording) even without labeled training data. Research papers for
-reference. For the most part, I intend to follow the methodology for the
-Zhuang, Zhou, Tygar paper (k-means clustering, HMMs for guessing, iterating
-with trained classifier from inferred data).
+sound recording) even without labeled training data.
 
 ### Supervised Methods
   * [*Keyboard acoustic emanations*](https://ieeexplore.ieee.org/document/1301311)

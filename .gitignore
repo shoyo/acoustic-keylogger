@@ -1,5 +1,6 @@
 # Ignore lab
-lab/
+lab/*
+!lab/figs
 
 # Ignore most datasets
 datasets/*

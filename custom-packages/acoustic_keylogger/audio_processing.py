@@ -17,7 +17,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.dialects import postgresql
 
 
-# File input (single WAV file -> sound file data)
+# File input (single WAV file path -> sound data encoded as array)
 
 def wav_read(filepath):
     """Return 1D NumPy array of wave-formatted audio data denoted by filename.
@@ -60,7 +60,7 @@ def remove_random_noise(sound_data, threshold=None):
     return sound_data_copy
 
 
-# Keystroke detection (single sound data -> all keystroke data in data)
+# Keystroke detection (encoded array -> all keystroke data in array)
 
 def detect_keystrokes(sound_data, sample_rate=44100):
     """Return slices of sound_data that denote each keystroke present.
@@ -161,7 +161,7 @@ def collect_keystroke_data(filepath_base='datasets/keystrokes/',
                          list(dict(keys: key type, sound digest, sound data))
     """
     alphabet = [letter for letter in 'abcdefghijklmnopqrstuvwxyz']
-    other_keys = ['space', 'period', 'enter']
+    other_keys = ['space', 'period', 'enter', 'delete']
     keys = keys or alphabet + other_keys
 
     collection = []

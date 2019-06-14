@@ -30,7 +30,7 @@ def wav_read(filepath):
 
 # Sound preprocessing before keystroke detection
 
-def silence_threshold(sound_data, n=5, factor=11):
+def silence_threshold(sound_data, n=5, factor=11, output=True):
     """Return the silence threshold of the sound data.
 
     The sound data should begin with n-seconds of silence.
@@ -40,7 +40,7 @@ def silence_threshold(sound_data, n=5, factor=11):
     silence       = sound_data[:num_samples]
     tolerance     = 40
     measured      = np.std(silence)
-    if measured > tolerance:
+    if output and measured > tolerance:
         # raise Exception(f'Sound data must begin with at least {n}s of silence.')
         print(f'Initial silence was higher than expected at {measured}, which',
               f' is higher than expected {tolerance}')

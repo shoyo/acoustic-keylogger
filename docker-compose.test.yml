@@ -15,7 +15,7 @@ services:
     ports:
       - "8888:8888"
     environment:
-      - TEST_DATABASE_URL=postgresql+psycopg2://postgres@acoustic-keylogger-research_db_1:5432
+      - TEST_DATABASE_URL=postgresql+psycopg2://postgres@acoustic-keylogger_db_1:5432
       - PYTHONPATH=/env/custom-packages/
     depends_on:
       - db

@@ -24,8 +24,11 @@ def wav_read(filepath):
 
     Input should be a string containing the path to a wave-formatted audio file.
     """
-    sample_rate, data_2d = wav.read(filepath)
-    return data_2d[:, 0]
+    sample_rate, data = wav.read(filepath)
+    if type(data[0]) == np.ndarray:
+        return data[:, 0]
+    else:
+        return data
 
 
 # Sound preprocessing before keystroke detection

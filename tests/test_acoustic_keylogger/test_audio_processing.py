@@ -150,7 +150,7 @@ class TestCollectKeystrokeData:
 
 
 class TestDatabaseOperations:
-    url = 'postgresql+psycopg2://postgres@acoustickeyloggerresearch_db_1:5432'
+    url = 'postgresql+psycopg2://postgres@acoustickeylogger_db_1:5432'
 
     def test_connect_to_database(self):
         engine = connect_to_database(self.url)

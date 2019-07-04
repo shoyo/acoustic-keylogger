@@ -65,7 +65,7 @@ def remove_random_noise(sound_data, threshold=None):
 
 # Keystroke detection (encoded array -> all keystroke data in array)
 
-def detect_keystrokes(sound_data, sample_rate=44100):
+def detect_keystrokes(sound_data, sample_rate=44100, output=True):
     """Return slices of sound_data that denote each keystroke present.
 
     Returned keystrokes are coerced to be the same length by appending trailing
@@ -91,7 +91,7 @@ def detect_keystrokes(sound_data, sample_rate=44100):
     :type sample_rate -- integer denoting sample rate (samples per second)
     :rtype            -- NumPy array of NumPy arrays
     """
-    threshold          = silence_threshold(sound_data, 5)
+    threshold          = silence_threshold(sound_data, output=output)
     keystroke_duration = 0.3   # seconds
     len_sample         = int(sample_rate * keystroke_duration)
 
@@ -175,7 +175,7 @@ def collect_keystroke_data(filepath_base='datasets/keystrokes/',
             if output:
                 print(f'  > Detecting keystrokes from "{file}"', end='')
             wav_data = wav_read(filepath + file)
-            keystrokes = detect_keystrokes(wav_data)
+            keystrokes = detect_keystrokes(wav_data, output=False)
             collected = 0
             for i in range(len(keystrokes)):
                 if ignore and file in ignore and i in ignore[file]:

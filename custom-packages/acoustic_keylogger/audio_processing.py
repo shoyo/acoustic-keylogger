@@ -164,7 +164,7 @@ def collect_keystroke_data(filepath_base='datasets/keystrokes/',
                          list(dict(keys: key type, sound digest, sound data))
     """
     alphabet = [letter for letter in 'abcdefghijklmnopqrstuvwxyz']
-    other_keys = ['space', 'period', 'enter', 'delete']
+    other_keys = ['space', 'period', 'enter']
     keys = keys or alphabet + other_keys
 
     collection = []
@@ -190,7 +190,7 @@ def collect_keystroke_data(filepath_base='datasets/keystrokes/',
                     collection.append(data)
                     collected += 1
             if output: print(f' => Collected {collected} keystrokes')
-    if output: print('> Done')
+    print('> Done')
 
     return collection
 

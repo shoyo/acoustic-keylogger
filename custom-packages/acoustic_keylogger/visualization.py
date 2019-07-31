@@ -48,6 +48,6 @@ def plot_keystrokes(X, y_int, y_str, min_distance=0.05, images=None, figsize=(13
 def save_fig(fig_id, tight_layout=True):
     path = os.path.join('../datasets/lab/figs/' + fig_id + '.png')
     print(f'Saving figure to {path}')
-    plt.tight_layout() if tight_layout
+    if tight_layout: plt.tight_layout()
     plt.savefig(path, format='png', dpi=300)
 

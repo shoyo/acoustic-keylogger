@@ -9,6 +9,7 @@ datasets/*
 !datasets/collection-tests
 !datasets/database-tests
 !datasets/very-rapid
+!datasets/readme.md
 
 # Ignore typist ids
 datasets/keystrokes/typist_ids.txt

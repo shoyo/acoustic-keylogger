@@ -129,7 +129,7 @@ to access the database. (Though the latter should still be possible using local
 postgres commands)
 
 
-## Testing [![CircleCI](https://circleci.com/gh/shoyo-inokuchi/acoustic-keylogger/tree/master.svg?style=svg)](https://circleci.com/gh/shoyo-inokuchi/acoustic-keylogger/tree/master)
+## Testing [![CircleCI](https://circleci.com/gh/shoyo/acoustic-keylogger/tree/master.svg?style=shield)](https://circleci.com/gh/shoyo/acoustic-keylogger/tree/master)
 
 Tests are being implemented for the __custom_packages/acoustic_keylogger__
 package, which contains various functions for audio processing and data

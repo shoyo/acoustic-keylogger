@@ -1,4 +1,6 @@
-#  Keyboard Acoustic Emanations Attack - Research [![CircleCI](https://circleci.com/gh/shoyo-inokuchi/acoustic-keylogger/tree/master.svg?style=svg)](https://circleci.com/gh/shoyo-inokuchi/acoustic-keylogger/tree/master)
+#  Keyboard Acoustic Emanations Attack - Research
+
+[![CircleCI](https://circleci.com/gh/shoyo/acoustic-keylogger/tree/master.svg?style=shield)](https://circleci.com/gh/shoyo/acoustic-keylogger/tree/master)
 
 ## Overview
 A *keyboard acoustic emanations attack* is a form of a [side-channel

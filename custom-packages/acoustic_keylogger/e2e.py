@@ -40,3 +40,25 @@ def zip_keys(signal_path, labels_path):
                         f'and number of labels ({len(y_int)})')
 
     return X, y_int, y_str
+
+
+def insert_deleted(arr, delete_idx, val=-1):
+    """Return a new array that inserts val into deleted indices assuming the original
+    array was length len(arr) + len(delete_idx).
+
+    Arguments:
+    arr        -- np.array to modify
+    delete_idx -- the `obj` argument passed into np.delete()
+    val        -- placeholder for insertion
+    """
+    orig_size = np.size(arr) + np.size(delete_idx)
+    ret = np.empty(orig_size, dtype=np.int8)
+    offset = 0
+    for i in range(np.size(ret)):
+        if i in delete_idx: # TODO: optimize this search if necessary
+            ret[i] = val
+            offset += 1
+        else:
+            ret[i] = arr[i - offset]
+    return ret
+

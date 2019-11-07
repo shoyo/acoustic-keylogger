@@ -1,4 +1,6 @@
-#  Keyboard Acoustic Emanations Attack - Research [![CircleCI](https://circleci.com/gh/shoyo-inokuchi/acoustic-keylogger/tree/master.svg?style=svg)](https://circleci.com/gh/shoyo-inokuchi/acoustic-keylogger/tree/master)
+#  Keyboard Acoustic Emanations Attack - Research
+
+[![CircleCI](https://circleci.com/gh/shoyo/acoustic-keylogger/tree/master.svg?style=shield)](https://circleci.com/gh/shoyo/acoustic-keylogger/tree/master)
 
 ## Overview
 A *keyboard acoustic emanations attack* is a form of a [side-channel
@@ -127,7 +129,7 @@ to access the database. (Though the latter should still be possible using local
 postgres commands)
 
 
-## Testing [![CircleCI](https://circleci.com/gh/shoyo-inokuchi/acoustic-keylogger/tree/master.svg?style=svg)](https://circleci.com/gh/shoyo-inokuchi/acoustic-keylogger/tree/master)
+## Testing [![CircleCI](https://circleci.com/gh/shoyo/acoustic-keylogger/tree/master.svg?style=shield)](https://circleci.com/gh/shoyo/acoustic-keylogger/tree/master)
 
 Tests are being implemented for the __custom_packages/acoustic_keylogger__
 package, which contains various functions for audio processing and data

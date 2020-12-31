@@ -8,9 +8,6 @@ jobs:
       - checkout
       - run: docker-compose -f docker-compose.test.yml build
       - run: docker-compose -f docker-compose.test.yml up -d
-      - run:
-          name: run tests
-          command: docker-compose -f docker-compose.test.yml run env pytest -q tests
 
       - store_artifacts:
           path: tests/reports

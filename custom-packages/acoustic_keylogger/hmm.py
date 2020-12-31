@@ -6,6 +6,7 @@ import os
 
 def read_encode():
     path = os.environ['ENCODE_PATH']
+
     with open(path, 'r') as f:
         encode = f.readlines()
     return np.array([int(v) for v in encode[0].split()])
@@ -22,16 +23,31 @@ def create_transmat(corpus, keys='abcdefghijklmnopqrstuvwxyz .,'):
     """
     mat = np.zeros((len(keys), len(keys)), dtype=np.int8)
     key_id_map = id_map(keys)
+    space_idx = reverse_id_map(keys)[' ']
 
-    # TODO
+    last_id = None
+    for word in corpus:
+        for letter in word:
+            curr = letter.lower()
+            try:
+                curr_id = key_id_map[curr]
+            except KeyError:
+                print(f"Skipping unrecognized char '{letter}'")
+                last_id = None
+                continue
+            if last_id:
+                mat[last_id][curr_id] += 1
+            last_id = curr_id
+        mat[last_id][space_idx] += 1
 
-    return mat
+    return mat, keys
 
 
 # Tests
 
 def test_create_transmat():
-        corpora = [
+    """Assert that `create_transmat()` behaves as expected."""
+    corpora = [
         ['This', 'is', 'a', 'sentence'],
         ['contains', '``', 'unrecognized', "''", 'characters'],
         [''],
@@ -70,6 +86,7 @@ def test_create_transmat():
     transmats[1][key_map['n']][key_map['t']] = 1
     transmats[1][key_map['t']][key_map['a']] = 1
     transmats[1][key_map['a']][key_map['i']] = 1
+    transmats[1][key_map['i']][key_map['n']] = 1
     transmats[1][key_map['n']][key_map['s']] = 1
     transmats[1][key_map['s']][key_map[' ']] = 1
     transmats[1][key_map[' ']][key_map['u']] = 1
@@ -151,10 +168,10 @@ def pprint_transmat(transmat, keys):
 
 
 def main():
-    encode = read_encode()
+    test_create_transmat()
 
-    # TODO
-    model = hmm.GaussianHMM(n_components=2)
+
+    # TODO: Create HMM and run tests
 
 
 if __name__ == '__main__':

@@ -6,7 +6,6 @@ import os
 
 def read_encode():
     path = os.environ['ENCODE_PATH']
-
     with open(path, 'r') as f:
         encode = f.readlines()
     return np.array([int(v) for v in encode[0].split()])
@@ -23,22 +22,30 @@ def create_transmat(corpus, keys='abcdefghijklmnopqrstuvwxyz .,'):
     """
     mat = np.zeros((len(keys), len(keys)), dtype=np.int8)
     key_id_map = id_map(keys)
-    space_idx = reverse_id_map(keys)[' ']
+    space_id = key_id_map[' ']
+    corpus_len = len(corpus) - 1
 
     last_id = None
-    for word in corpus:
-        for letter in word:
+    for i in range(len(corpus)):
+        for letter in corpus[i]:
             curr = letter.lower()
             try:
                 curr_id = key_id_map[curr]
             except KeyError:
-                print(f"Skipping unrecognized char '{letter}'")
+                print(f"  Skipping unrecognized char '{letter}'")
                 last_id = None
                 continue
-            if last_id:
+
+            if last_id is not None:
                 mat[last_id][curr_id] += 1
             last_id = curr_id
-        mat[last_id][space_idx] += 1
+
+        if i == corpus_len:
+            break
+
+        if last_id is not None:
+            mat[last_id][space_id] += 1
+        last_id = space_id
 
     return mat, keys
 
@@ -46,7 +53,7 @@ def create_transmat(corpus, keys='abcdefghijklmnopqrstuvwxyz .,'):
 # Tests
 
 def test_create_transmat():
-    """Assert that `create_transmat()` behaves as expected."""
+    """Assert that `create_transmat()` behaves correctly."""
     corpora = [
         ['This', 'is', 'a', 'sentence'],
         ['contains', '``', 'unrecognized', "''", 'characters'],
@@ -55,7 +62,7 @@ def test_create_transmat():
     
     keys = 'abcdefghijklmnopqrstuvwxyz .,'
     key_map = id_map(keys)
-    reverse_map = dict(enumerate(keys))
+    reverse_map = reverse_id_map(keys)
     base_mat = np.zeros((len(keys), len(keys)), dtype=int)
     
     transmats = [
@@ -64,7 +71,6 @@ def test_create_transmat():
         base_mat.copy(),
     ]
 
-    # Create correct transition matrix for corpora[0]
     transmats[0][key_map['t']][key_map['h']] = 1
     transmats[0][key_map['h']][key_map['i']] = 1
     transmats[0][key_map['i']][key_map['s']] = 2
@@ -80,7 +86,6 @@ def test_create_transmat():
     transmats[0][key_map['n']][key_map['c']] = 1
     transmats[0][key_map['c']][key_map['e']] = 1
     
-    # Create correct transition matrix for corpora[1]
     transmats[1][key_map['c']][key_map['o']] = 2
     transmats[1][key_map['o']][key_map['n']] = 1
     transmats[1][key_map['n']][key_map['t']] = 1

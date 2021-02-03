@@ -5,6 +5,8 @@ services:
     image: postgres:11
     volumes:
       - ./db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=notsecure
 
   env:
     build:
@@ -15,7 +17,7 @@ services:
     ports:
       - "8888:8888"
     environment:
-      - TEST_DATABASE_URL=postgresql+psycopg2://postgres@acoustic-keylogger-research_db_1:5432
-      - PYTHONPATH=/env/custom-packages/
+      - TEST_DATABASE_URL=postgresql+psycopg2://postgres:notsecure@acoustic-keylogger_db_1:5432
+      - PYTHONPATH=/env/
     depends_on:
       - db

@@ -58,7 +58,7 @@ keystroke is extracted into a [mel-frequency ceptral coefficients](https://en.wi
 feature vector and embedded with [t-SNE](https://en.wikipedia.org/wiki/T-distributed_stochastic_neighbor_embedding).
 Note that the points above are colored and labeled to visualize the accuracy of the clustering. In
 practice, the attacker would need to perform further processing (cluster labeling) after this step
-which may or may accurately predict which key belongs to which cluster.
+which may or may not accurately predict which key belongs to which cluster.
 
 The functions used to process the data are located in the `acoustic_keylogger` package. I don't
 have any immediate plans to write external documentation on how to use the package, but each

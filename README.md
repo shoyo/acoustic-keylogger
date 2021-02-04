@@ -94,21 +94,20 @@ This pipeline is modeled after the research described in [*Keyboard Acoustic Ema
 
 ## Setting up
 ### Option 0 - Using your own research environment
-I assume many readers of this repository already have their own environment for conducting numerical
+I'd assume many readers of this repository already have their own environment for conducting numerical
 research (with Jupyter, NumPy etc.).
 
 If you'd like to tinker around in your own environment, simply copy the `acoustic_keylogger` package into
-your own machine, (possibly) update your `PYTHONPATH`, and import the functions as you please.
+your own machine, (possibly) update your `PYTHONPATH`, and import the functions as needed.
 
 ### Option 1 - Docker
 This project uses a Python development environment and a PostgreSQL database to
 manage various audio data. I chose Postgres due to variable-length array support,
-but feel free to edit the config to use your preferred database). This option
+but feel free to edit the config to use your preferred database. This option
 spins up the Jupyter environment and database with Docker Compose.  
 
 * Install [Docker](https://www.docker.com/products/docker-desktop).  
-* Build images with `$ docker-compose build`. This is only required the first
-time or whenever Docker settings are changed.
+* Build images with `$ docker-compose build`. This is only required when dependencies or Docker config are updated.
 
 This step will install all dependencies for `env` (such as Jupyter, Tensorflow,
 NumPy etc.) and mount your local file system with the file system within the
@@ -130,8 +129,8 @@ and run
 
         $ conda install python=<version>
 
-* Set up a virtual environment. You can use conda, pipenv, virtualenvwrapper etc. for managing
-multiple environments.   
+* Set up a Python virtual environment. You can use conda, pipenv, virtualenvwrapper etc. for managing
+multiple environments.
 
 * Install dependencies with
 
